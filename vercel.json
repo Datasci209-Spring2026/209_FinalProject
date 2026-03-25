@@ -7,12 +7,28 @@
     {
       "src": "static/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "williamprojecteda.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "js/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "css/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "data/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": ""/williamprojecteda.html"
+      "dest": "/williamprojecteda.html"
     },
     {
       "src": "/(.*)",
