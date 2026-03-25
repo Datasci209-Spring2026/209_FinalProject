@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>US Power Generation Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="page">
+    <h1>US Power Generation Dashboard</h1>
+
+    <section class="chart-section">
+      <div class="chart-card legend-aligned">
+        <div id="chart1"></div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="chart-card legend-aligned">
+        <div id="chart2"></div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="chart-card legend-aligned">
+        <div id="chart3"></div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="chart4-layout">
+        <div class="chart-card chart-span-3 legend-aligned">
+          <div id="chart4"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="section-block">
+        <div class="controls">
+          <div>
+            <label for="selectedState">Select a state</label>
+            <select id="selectedState"></select>
+          </div>
+        </div>
+
+        <div class="chart-card legend-aligned">
+          <div id="chart5"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="section-block">
+        <div class="controls">
+          <div>
+            <label for="selectedStateLeft">Select State 1</label>
+            <select id="selectedStateLeft"></select>
+          </div>
+
+          <div>
+            <label for="selectedStateRight">Select State 2</label>
+            <select id="selectedStateRight"></select>
+          </div>
+        </div>
+
+        <div class="chart5v2-layout">
+          <div class="chart-card chart-span-2 legend-aligned">
+            <div id="chart5_v2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="section-block">
+        <div class="controls">
+          <div>
+            <label for="selectedSource">Energy source</label>
+            <select id="selectedSource"></select>
+          </div>
+
+          <div>
+            <label for="selectedYear">Year</label>
+            <input
+              id="selectedYear"
+              type="range"
+              min="2001"
+              max="2024"
+              step="1"
+              value="2001"
+            />
+            <span id="selectedYearValue">2001</span>
+          </div>
+        </div>
+
+        <div class="chart-card legend-aligned">
+          <div id="chart6"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <div class="section-block">
+        <div class="controls">
+          <div>
+            <label for="selectedPlantSource">Dominant energy source</label>
+            <select id="selectedPlantSource"></select>
+          </div>
+
+          <div>
+            <label for="selectedPlantYear">Year</label>
+            <input
+              id="selectedPlantYear"
+              type="range"
+              min="2001"
+              max="2024"
+              step="1"
+              value="2024"
+            />
+            <span id="selectedPlantYearValue">2024</span>
+          </div>
+        </div>
+
+        <div class="chart-card legend-aligned">
+          <div id="chart7"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <script type="module" src="js/main.js"></script>
+  
+</body>
+</html>
