@@ -5,10 +5,6 @@
       "use": "@vercel/static"
     },
     {
-      "src": "williamprojecteda.html",
-      "use": "@vercel/static"
-    },
-    {
       "src": "js/**",
       "use": "@vercel/static"
     },
@@ -33,10 +29,6 @@
     {
       "src": "^/$",
       "dest": "/index.html"
-    },
-    {
-      "src": "^/$",
-      "dest": "/williamprojecteda.html"
     },
     {
       "src": "^/(js/.*|css/.*|data/.*|static/.*)$",
