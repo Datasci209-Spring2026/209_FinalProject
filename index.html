@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Visual Exploration of Global Greenhouse Gas Emissions, Energy Consumption, and US Energy Production</title>
+  <title>Energy Dashboard</title>
   <link rel="stylesheet" href="css/styles.css" />
   <script type="module" src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
   <style>
@@ -85,7 +85,7 @@
 
     tableau-viz {
       width: 100%;
-      height: 380px;
+      height: 900px;
       margin-bottom: 20px;
       display: block;
     }
@@ -93,9 +93,9 @@
 </head>
 <body>
   <main class="page">
-    <h1>A Visual Exploration of Global Greenhouse Gas Emissions, Energy Consumption, and US Energy Production</h1>
+    <h1>Energy Dashboard</h1>
     <p class="page-intro">
-      This visualization was created to aid students and the general public understand the sources of greenhouse gas emissions, the demands of global energy consumption, and an in-depth review of domestic US energy production and its efforts to move towards green energy.
+      Combined project dashboard with global greenhouse gas charts first, followed by global energy context charts and the US power generation dashboard.
     </p>
 
     <section>
@@ -105,17 +105,17 @@
       </p>
 
       <section class="chart-block">
-        <h3>Chart 1</h3>
+        <h3>Chart 1 — Top Global Greenhouse Gas Emitters Over Time</h3>
         <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet1"></tableau-viz>
       </section>
 
       <section class="chart-block">
-        <h3>Chart 2</h3>
+        <h3>Chart 2 — 2024 Geographic Global Emissions Distribution</h3>
         <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet2"></tableau-viz>
       </section>
 
       <section class="chart-block">
-        <h3>Chart 3</h3>
+        <h3>Chart 3 — Emissions by Economic Sector</h3>
         <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet3"></tableau-viz>
       </section>
     </section>
@@ -123,18 +123,18 @@
     <hr class="dashboard-divider" />
 
     <section>
-      <h2 class="subsection-title">Global Energy Consumption</h2>
+      <h2 class="subsection-title">Global Energy Consumption Charts</h2>
       <p class="subsection-copy">
-        Interactive Vega and Vega-Lite charts.
+        Vega and Vega-Lite charts loaded from external specification files in the <code>data/</code> directory.
       </p>
 
       <section class="chart-block">
-        <h3>World Energy Consumption Since 1965</h3>
+        <h3>Chart 4 — World Energy Consumption Since 1965</h3>
         <div id="vis1" class="vis"></div>
       </section>
 
       <section class="chart-block">
-        <h3>Low-Carbon Energy Share vs GDP per Capita</h3>
+        <h3>Chart 5 — Low-Carbon Energy Share vs GDP per Capita</h3>
         <div id="vis2" class="vis"></div>
       </section>
     </section>
@@ -142,30 +142,34 @@
     <hr class="dashboard-divider" />
 
     <section>
-      <h2 class="subsection-title">US Power Generation</h2>
+      <h2 class="subsection-title">US Power Generation Dashboard</h2>
       <p class="subsection-copy">
         Interactive D3 charts and maps for US generation by source, state, and plant.
       </p>
 
       <section class="chart-section">
+        <h3>Chart 6</h3>
         <div class="chart-card legend-aligned">
           <div id="chart1"></div>
         </div>
       </section>
 
       <section class="chart-section">
+        <h3>Chart 7</h3>
         <div class="chart-card legend-aligned">
           <div id="chart2"></div>
         </div>
       </section>
 
       <section class="chart-section">
+        <h3>Chart 8</h3>
         <div class="chart-card legend-aligned">
           <div id="chart3"></div>
         </div>
       </section>
 
       <section class="chart-section">
+        <h3>Chart 9</h3>
         <div class="chart4-layout">
           <div class="chart-card chart-span-3 legend-aligned">
             <div id="chart4"></div>
@@ -174,6 +178,7 @@
       </section>
 
       <section class="chart-section">
+        <h3>Chart 10</h3>
         <div class="section-block">
           <div class="controls">
             <div>
@@ -189,6 +194,7 @@
       </section>
 
       <section class="chart-section">
+        <h3>Chart 11</h3>
         <div class="section-block">
           <div class="controls">
             <div>
@@ -211,6 +217,7 @@
       </section>
 
       <section class="chart-section">
+        <h3>Chart 12</h3>
         <div class="section-block">
           <div class="controls">
             <div>
@@ -239,6 +246,7 @@
       </section>
 
       <section class="chart-section">
+        <h3>Chart 13</h3>
         <div class="section-block">
           <div class="controls">
             <div>
@@ -265,17 +273,6 @@
           </div>
         </div>
       </section>
-    </section>
-
-    <hr class="dashboard-divider" />
-
-    <section>
-      <h2 class="subsection-title">Data Sources</h2>
-      <p class="subsection-copy">
-        1. U.S Energy Information Administration (EIA) Form EIA-923 monthly reports.<br />
-        2. [Add source here].<br />
-        3. [Add source here].
-      </p>
     </section>
   </main>
 
