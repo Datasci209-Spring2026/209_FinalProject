@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>209 Final Project</title>
   <link rel="stylesheet" href="css/styles.css" />
   <script type="module" src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
   <style>
@@ -11,6 +12,9 @@
       --matt-muted: #6b7280;
       --matt-border: #e5e7eb;
       --matt-bg: #ffffff;
+      --tab-bg: #f8fafc;
+      --tab-active: #111827;
+      --tab-active-text: #ffffff;
     }
 
     body {
@@ -31,6 +35,50 @@
     }
 
     .page-intro {
+      margin: 0 0 28px;
+      color: var(--matt-muted);
+      line-height: 1.5;
+    }
+
+    .tab-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--matt-border);
+    }
+
+    .tab-button {
+      appearance: none;
+      border: 1px solid var(--matt-border);
+      background: var(--tab-bg);
+      color: var(--matt-text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-button:hover {
+      border-color: #cbd5e1;
+      background: #f1f5f9;
+    }
+
+    .tab-button.active {
+      background: var(--tab-active);
+      color: var(--tab-active-text);
+      border-color: var(--tab-active);
+    }
+
+    .tab-panel-title {
+      margin: 0 0 10px;
+      font-size: 1.75rem;
+    }
+
+    .tab-panel-intro {
       margin: 0 0 28px;
       color: var(--matt-muted);
       line-height: 1.5;
@@ -63,10 +111,15 @@
       overflow-x: auto;
     }
 
-    .chart-block h3 {
+    .chart-block h3,
+    .chart-section h3 {
       margin: 0 0 14px;
       font-size: 1.05rem;
       font-weight: 500;
+    }
+
+    .chart-section {
+      margin: 0 0 32px;
     }
 
     .vis {
@@ -88,6 +141,14 @@
       margin-bottom: 20px;
       display: block;
     }
+
+    .placeholder-card {
+      padding: 24px;
+      border: 1px solid var(--matt-border);
+      border-radius: 14px;
+      background: #fff;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
@@ -97,193 +158,14 @@
       This visualization was created to aid students and the general public understand the sources of greenhouse gas emissions, the demands of global energy consumption, and in-depth review of domestic US energy production.
     </p>
 
-    <section>
-      <h2 class="subsection-title">Global Greenhouse Gas Emissions</h2>
-      <p class="subsection-copy">
-        Interactive Tableau charts embedded from Tableau Public.
-      </p>
+    <nav class="tab-nav" aria-label="Project tabs">
+      <button class="tab-button active" data-tab="final-project">Final Project</button>
+      <button class="tab-button" data-tab="supplemental-visualizations">Supplemental Visualizations</button>
+      <button class="tab-button" data-tab="sources-and-methods">Sources and Methods</button>
+      <button class="tab-button" data-tab="usability-study">Usability Study</button>
+    </nav>
 
-      <section class="chart-block">
-        <h3>Chart 1</h3>
-        <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet1"></tableau-viz>
-      </section>
-
-      <section class="chart-block">
-        <h3>Chart 2</h3>
-        <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet2"></tableau-viz>
-      </section>
-
-      <section class="chart-block">
-        <h3>Chart 3</h3>
-        <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet3"></tableau-viz>
-      </section>
-    </section>
-
-    <hr class="dashboard-divider" />
-
-    <section>
-      <h2 class="subsection-title">Global Energy Consumption Charts</h2>
-      <p class="subsection-copy">
-        Vega and Vega-Lite charts loaded from external specification files in the <code>data/</code> directory.
-      </p>
-
-      <section class="chart-block">
-        <h3>Chart 4</h3>
-        <div id="vis1" class="vis"></div>
-      </section>
-
-      <section class="chart-block">
-        <h3>Chart 5</h3>
-        <div id="vis2" class="vis"></div>
-      </section>
-    </section>
-
-    <hr class="dashboard-divider" />
-
-    <section>
-      <h2 class="subsection-title">US Power Generation Dashboard</h2>
-      <p class="subsection-copy">
-        Interactive D3 charts and maps for US generation by source, state, and plant.
-      </p>
-
-      <section class="chart-section">
-        <h3>Chart 6</h3>
-        <div class="chart-card legend-aligned">
-          <div id="chart1"></div>
-        </div>
-      </section>
-
-      <section class="chart-section">
-        <h3>Chart 7</h3>
-        <div class="chart-card legend-aligned">
-          <div id="chart2"></div>
-        </div>
-      </section>
-
-      <section class="chart-section">
-        <h3>Chart 8</h3>
-        <div class="chart-card legend-aligned">
-          <div id="chart3"></div>
-        </div>
-      </section>
-
-      <section class="chart-section">
-        <h3>Chart 9</h3>
-        <div class="chart4-layout">
-          <div class="chart-card chart-span-3 legend-aligned">
-            <div id="chart4"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="chart-section">
-        <h3>Chart 10</h3>
-        <div class="section-block">
-          <div class="controls">
-            <div>
-              <label for="selectedState">Select a state</label>
-              <select id="selectedState"></select>
-            </div>
-          </div>
-
-          <div class="chart-card legend-aligned">
-            <div id="chart5"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="chart-section">
-        <h3>Chart 11</h3>
-        <div class="section-block">
-          <div class="controls">
-            <div>
-              <label for="selectedStateLeft">Select State 1</label>
-              <select id="selectedStateLeft"></select>
-            </div>
-
-            <div>
-              <label for="selectedStateRight">Select State 2</label>
-              <select id="selectedStateRight"></select>
-            </div>
-          </div>
-
-          <div class="chart5v2-layout">
-            <div class="chart-card chart-span-2 legend-aligned">
-              <div id="chart5_v2"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="chart-section">
-        <h3>Chart 12</h3>
-        <div class="section-block">
-          <div class="controls">
-            <div>
-              <label for="selectedSource">Energy source</label>
-              <select id="selectedSource"></select>
-            </div>
-
-            <div>
-              <label for="selectedYear">Year</label>
-              <input
-                id="selectedYear"
-                type="range"
-                min="2001"
-                max="2024"
-                step="1"
-                value="2001"
-              />
-              <span id="selectedYearValue">2001</span>
-            </div>
-          </div>
-
-          <div class="chart-card legend-aligned">
-            <div id="chart6"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="chart-section">
-        <h3>Chart 13</h3>
-        <div class="section-block">
-          <div class="controls">
-            <div>
-              <label for="selectedPlantSource">Dominant energy source</label>
-              <select id="selectedPlantSource"></select>
-            </div>
-
-            <div>
-              <label for="selectedPlantYear">Year</label>
-              <input
-                id="selectedPlantYear"
-                type="range"
-                min="2001"
-                max="2024"
-                step="1"
-                value="2024"
-              />
-              <span id="selectedPlantYearValue">2024</span>
-            </div>
-          </div>
-
-          <div class="chart-card legend-aligned">
-            <div id="chart7"></div>
-          </div>
-        </div>
-      </section>
-    </section>
-  
-    <hr class="dashboard-divider" />
-
-    <section>
-      <h2 class="subsection-title">Data Sources</h2>
-      <p class="subsection-copy">
-        1. U.S Energy Information Administration (EIA) Form EIA-923 monthly reports.<br />
-        2. [Add source here].<br />
-        3. [Add source here].<br />
-      </p>
-    </section>
+    <div id="tab-content"></div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
@@ -298,10 +180,345 @@
       renderer: 'svg'
     };
 
-    vegaEmbed('#vis1', 'data/viz1.vl.json', embedOptions).catch(console.error);
-    vegaEmbed('#vis2', 'data/viz2.vl.json', embedOptions).catch(console.error);
-  </script>
+    const dashboardContent = `
+      <section>
+        <h2 class="subsection-title">Global Greenhouse Gas Emissions</h2>
+        <p class="subsection-copy">
+          Interactive Tableau charts embedded from Tableau Public.
+        </p>
 
-  <script type="module" src="js/main.js"></script>
+        <section class="chart-block">
+          <h3>Chart 1</h3>
+          <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet1"></tableau-viz>
+        </section>
+
+        <section class="chart-block">
+          <h3>Chart 2</h3>
+          <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet2"></tableau-viz>
+        </section>
+
+        <section class="chart-block">
+          <h3>Chart 3</h3>
+          <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/Sheet3"></tableau-viz>
+        </section>
+      </section>
+
+      <hr class="dashboard-divider" />
+
+      <section>
+        <h2 class="subsection-title">Global Energy Consumption Charts</h2>
+        <p class="subsection-copy">
+          Vega and Vega-Lite charts loaded from external specification files in the active data directory.
+        </p>
+
+        <section class="chart-block">
+          <h3>Chart 4</h3>
+          <div id="vis1" class="vis"></div>
+        </section>
+
+        <section class="chart-block">
+          <h3>Chart 5</h3>
+          <div id="vis2" class="vis"></div>
+        </section>
+      </section>
+
+      <hr class="dashboard-divider" />
+
+      <section>
+        <h2 class="subsection-title">US Power Generation Dashboard</h2>
+        <p class="subsection-copy">
+          Interactive D3 charts and maps for US generation by source, state, and plant.
+        </p>
+
+        <section class="chart-section">
+          <h3>Chart 6</h3>
+          <div class="chart-card legend-aligned">
+            <div id="chart1"></div>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <h3>Chart 7</h3>
+          <div class="chart-card legend-aligned">
+            <div id="chart2"></div>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <h3>Chart 8</h3>
+          <div class="chart-card legend-aligned">
+            <div id="chart3"></div>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <h3>Chart 9</h3>
+          <div class="chart4-layout">
+            <div class="chart-card chart-span-3 legend-aligned">
+              <div id="chart4"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <h3>Chart 10</h3>
+          <div class="section-block">
+            <div class="controls">
+              <div>
+                <label for="selectedState">Select a state</label>
+                <select id="selectedState"></select>
+              </div>
+            </div>
+
+            <div class="chart-card legend-aligned">
+              <div id="chart5"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <h3>Chart 11</h3>
+          <div class="section-block">
+            <div class="controls">
+              <div>
+                <label for="selectedStateLeft">Select State 1</label>
+                <select id="selectedStateLeft"></select>
+              </div>
+
+              <div>
+                <label for="selectedStateRight">Select State 2</label>
+                <select id="selectedStateRight"></select>
+              </div>
+            </div>
+
+            <div class="chart5v2-layout">
+              <div class="chart-card chart-span-2 legend-aligned">
+                <div id="chart5_v2"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <h3>Chart 12</h3>
+          <div class="section-block">
+            <div class="controls">
+              <div>
+                <label for="selectedSource">Energy source</label>
+                <select id="selectedSource"></select>
+              </div>
+
+              <div>
+                <label for="selectedYear">Year</label>
+                <input
+                  id="selectedYear"
+                  type="range"
+                  min="2001"
+                  max="2024"
+                  step="1"
+                  value="2001"
+                />
+                <span id="selectedYearValue">2001</span>
+              </div>
+            </div>
+
+            <div class="chart-card legend-aligned">
+              <div id="chart6"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <h3>Chart 13</h3>
+          <div class="section-block">
+            <div class="controls">
+              <div>
+                <label for="selectedPlantSource">Dominant energy source</label>
+                <select id="selectedPlantSource"></select>
+              </div>
+
+              <div>
+                <label for="selectedPlantYear">Year</label>
+                <input
+                  id="selectedPlantYear"
+                  type="range"
+                  min="2001"
+                  max="2024"
+                  step="1"
+                  value="2024"
+                />
+                <span id="selectedPlantYearValue">2024</span>
+              </div>
+            </div>
+
+            <div class="chart-card legend-aligned">
+              <div id="chart7"></div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <hr class="dashboard-divider" />
+
+      <section>
+        <h2 class="subsection-title">Data Sources</h2>
+        <p class="subsection-copy">
+          1. U.S Energy Information Administration (EIA) Form EIA-923 monthly reports.<br />
+          2. [Add source here].<br />
+          3. [Add source here].<br />
+        </p>
+      </section>
+    `;
+
+    const tabConfig = {
+      "final-project": {
+        title: "Final Project",
+        intro: "This tab starts as a copy of the current usability-study layout and points chart data to the root project folders.",
+        type: "dashboard",
+        dataPrefix: "",
+        moduleBase: "js"
+      },
+      "usability-study": {
+        title: "Usability Study",
+        intro: "This tab preserves the current layout and routes chart assets through the usability_study folder.",
+        type: "dashboard",
+        dataPrefix: "usability_study",
+        moduleBase: "usability_study/js"
+      },
+      "supplemental-visualizations": {
+        title: "Supplemental Visualizations",
+        intro: "Use this tab for additional charts, alternate views, or exploratory visuals that support the final project.",
+        type: "placeholder",
+        body: `
+          <div class="placeholder-card">
+            Add your supplemental charts, static images, or embedded dashboards here.
+          </div>
+        `
+      },
+      "sources-and-methods": {
+        title: "Sources and Methods",
+        intro: "Use this tab for methodology notes, data provenance, cleaning decisions, and chart design rationale.",
+        type: "placeholder",
+        body: `
+          <div class="placeholder-card">
+            Add your methods write-up, source citations, assumptions, and data-processing notes here.
+          </div>
+        `
+      }
+    };
+
+    const content = document.getElementById("tab-content");
+
+    function patchD3ForDataPrefix() {
+      if (window.__d3DataPrefixPatched) return;
+      window.__d3DataPrefixPatched = true;
+
+      const originalCsv = d3.csv.bind(d3);
+
+      d3.csv = function(url, ...args) {
+        const prefix = window.__ACTIVE_DATA_PREFIX__ || "";
+        const isRelativeDataPath =
+          typeof url === "string" &&
+          url.startsWith("data/") &&
+          !url.startsWith("http://") &&
+          !url.startsWith("https://") &&
+          !url.startsWith("/");
+
+        const rewrittenUrl = isRelativeDataPath && prefix
+          ? `${prefix}/${url}`
+          : url;
+
+        return originalCsv(rewrittenUrl, ...args);
+      };
+    }
+
+    function clearTransientTooltips() {
+      [
+        ".chart1-tooltip",
+        ".chart2-tooltip",
+        ".chart3-tooltip",
+        ".chart4-tooltip",
+        ".chart5-tooltip",
+        ".chart5-v2-tooltip",
+        ".chart6-tooltip",
+        ".chart7-tooltip"
+      ].forEach((selector) => {
+        document.querySelectorAll(selector).forEach((node) => node.remove());
+      });
+    }
+
+    function removeOldModuleScript() {
+      const oldScript = document.getElementById("active-dashboard-module");
+      if (oldScript) oldScript.remove();
+    }
+
+    async function loadDashboardModule(moduleBase, tabKey) {
+      removeOldModuleScript();
+
+      const script = document.createElement("script");
+      script.type = "module";
+      script.id = "active-dashboard-module";
+      script.textContent = `
+        import "./${moduleBase}/main.js?tab=${encodeURIComponent(tabKey)}&ts=${Date.now()}";
+      `;
+
+      document.body.appendChild(script);
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    async function renderDashboard(tabKey, config) {
+      content.innerHTML = `
+        <section>
+          <h2 class="tab-panel-title">${config.title}</h2>
+          <p class="tab-panel-intro">${config.intro}</p>
+        </section>
+        ${dashboardContent}
+      `;
+
+      window.__ACTIVE_DATA_PREFIX__ = config.dataPrefix;
+      patchD3ForDataPrefix();
+      clearTransientTooltips();
+
+      const specBase = config.dataPrefix ? `${config.dataPrefix}/data` : "data";
+
+      await vegaEmbed("#vis1", `${specBase}/viz1.vl.json`, embedOptions).catch(console.error);
+      await vegaEmbed("#vis2", `${specBase}/viz2.vl.json`, embedOptions).catch(console.error);
+
+      await loadDashboardModule(config.moduleBase, tabKey);
+    }
+
+    function renderPlaceholder(config) {
+      removeOldModuleScript();
+      content.innerHTML = `
+        <section>
+          <h2 class="tab-panel-title">${config.title}</h2>
+          <p class="tab-panel-intro">${config.intro}</p>
+          ${config.body}
+        </section>
+      `;
+    }
+
+    async function setActiveTab(tabKey) {
+      document.querySelectorAll(".tab-button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === tabKey);
+      });
+
+      const config = tabConfig[tabKey];
+      if (!config) return;
+
+      if (config.type === "dashboard") {
+        await renderDashboard(tabKey, config);
+      } else {
+        renderPlaceholder(config);
+      }
+    }
+
+    document.querySelectorAll(".tab-button").forEach((button) => {
+      button.addEventListener("click", () => setActiveTab(button.dataset.tab));
+    });
+
+    setActiveTab("final-project");
+  </script>  </script>
 </body>
 </html>
