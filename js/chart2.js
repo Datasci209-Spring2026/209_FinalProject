@@ -155,6 +155,7 @@ export function renderChart2({
     .attr("x", (width - marginRight + marginLeft) / 2)
     .attr("y", height - 10)
     .attr("text-anchor", "middle")
+	.attr("font-size", 16)
     .text("Report Date");
 
   svg
@@ -163,7 +164,7 @@ export function renderChart2({
     .attr("x", -(height / 2))
     .attr("y", 40)
     .attr("text-anchor", "middle")
-    .attr("font-size", 12)
+    .attr("font-size", 16)
     .text("Net Generation (TWh)");
 
   const legend = svg
