@@ -1,4 +1,4 @@
-import { renderChart1 } from "./chart1.js";
+// import { renderChart1 } from "./chart1.js";
 import { renderChart2 } from "./chart2.js";
 import { renderChart3 } from "./chart3.js";
 import { renderChart4 } from "./chart4.js";
@@ -640,12 +640,13 @@ async function init() {
       .range([1.5, 14]);
   }
 
-  renderChart1({
-    container: "#chart1",
-    stackedInputYearly,
-    sourceOrder,
-    energyColors
-  });
+// commented out Chart1
+//  renderChart1({
+//    container: "#chart1",
+//    stackedInputYearly,
+//    sourceOrder,
+//    energyColors
+//  });
 
   renderChart2({
     container: "#chart2",

@@ -1,3 +1,15 @@
+import {
+  chartTheme,
+  applyBaseSvgStyle,
+  addStandardTitle,
+  styleBottomAxis,
+  styleLeftAxis,
+  addXAxisLabel,
+  addYAxisLabel,
+  addLegend,
+  createTooltip
+} from "./chartTheme.js";
+
 export function renderChart5({
   container,
   selectedState,
@@ -8,7 +20,7 @@ export function renderChart5({
 }) {
   const width = 1100;
   const height = 620;
-  const marginTop = 70;
+  const marginTop = 80; // was 100
   const marginRight = 220;
   const marginBottom = 50;
   const marginLeft = 90;
@@ -26,28 +38,11 @@ export function renderChart5({
     .create("svg")
     .attr("viewBox", [0, 0, width, height])
     .attr("width", width)
-    .attr("height", height)
-    .style("max-width", "100%")
-    .style("height", "auto")
-    .style("font", "12px sans-serif");
+    .attr("height", height);
 
-  d3.selectAll(".chart5-tooltip").remove();
+  applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = d3
-    .create("div")
-    .attr("class", "chart5-tooltip")
-    .style("position", "absolute")
-    .style("pointer-events", "none")
-    .style("background", "rgba(255,255,255,0.95)")
-    .style("border", "1px solid #ccc")
-    .style("border-radius", "4px")
-    .style("padding", "8px 10px")
-    .style("font", "12px sans-serif")
-    .style("line-height", "1.4")
-    .style("box-shadow", "0 2px 6px rgba(0,0,0,0.15)")
-    .style("visibility", "hidden");
-
-  document.body.appendChild(tooltip.node());
+  const tooltip = createTooltip("chart5-tooltip", chartTheme);
 
   const x = d3
     .scaleUtc()
@@ -75,35 +70,14 @@ export function renderChart5({
   const chartCenterX = (marginLeft + (width - marginRight)) / 2;
   const stateLabel = stateNameLookup[selectedState] || selectedState;
 
-  const title = svg
-    .append("text")
-    .attr("x", chartCenterX)
-    .attr("y", 20)
-    .attr("text-anchor", "middle");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "0em")
-    .attr("font-size", 16)
-    .attr("font-weight", "bold")
-    .text(`Net Power Generation by Energy Source — ${stateLabel}`);
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.4em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Annual From 2001 to 2024");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.2em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Source: EIA Form 923 Monthly Reports");
+  addStandardTitle(svg, {
+    centerX: chartCenterX,
+    y: 20,
+    title: `Net Power Generation by Energy Source — ${stateLabel}`,
+    subtitle1: "Annual From 2001 to 2024",
+    subtitle2: "Source: EIA Form 923 Monthly Reports",
+    theme: chartTheme
+  });
 
   svg
     .append("g")
@@ -115,16 +89,16 @@ export function renderChart5({
     .attr("stroke-width", 0.5)
     .attr("d", area);
 
-  svg
+  const xAxisGroup = svg
     .append("g")
     .attr("transform", `translate(0,${height - marginBottom})`)
     .call(
       d3.axisBottom(x).ticks(d3.utcYear.every(1)).tickFormat(d3.utcFormat("%Y"))
-    )
-    .call((g) => g.select(".domain").remove())
-    .call((g) => g.selectAll(".tick text").attr("font-size", 12));
+    );
 
-  svg
+  styleBottomAxis(xAxisGroup, chartTheme);
+
+  const yAxisGroup = svg
     .append("g")
     .attr("transform", `translate(${marginLeft},0)`)
     .call(
@@ -132,16 +106,13 @@ export function renderChart5({
         .axisLeft(y)
         .ticks(8)
         .tickFormat((d) => d3.format(",.0f")(d / 1e6))
-    )
-    .call((g) => g.select(".domain").remove())
-    .call((g) =>
-      g
-        .selectAll(".tick line")
-        .clone()
-        .attr("x2", width - marginLeft - marginRight)
-        .attr("stroke-opacity", 0.1)
-    )
-    .call((g) => g.selectAll(".tick text").attr("font-size", 12));
+    );
+
+  styleLeftAxis(yAxisGroup, {
+    gridWidth: width - marginLeft - marginRight,
+    gridOpacity: 0.1,
+    theme: chartTheme
+  });
 
   const hoverLine = svg
     .append("line")
@@ -152,45 +123,27 @@ export function renderChart5({
     .attr("y2", height - marginBottom)
     .style("visibility", "hidden");
 
-  svg
-    .append("text")
-    .attr("x", (width - marginRight + marginLeft) / 2)
-    .attr("y", height - 10)
-    .attr("text-anchor", "middle")
-    .attr("font-size", 12)
-    .text("Report Date");
+  addXAxisLabel(svg, {
+    x: (width - marginRight + marginLeft) / 2,
+    y: height - 5, // was 10
+    text: "Report Date",
+    theme: chartTheme
+  });
 
-  svg
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("x", -(height / 2))
-    .attr("y", 42)
-    .attr("text-anchor", "middle")
-    .attr("font-size", 12)
-    .text("Net Generation (TWh)");
+  addYAxisLabel(svg, {
+    x: -(height / 2),
+    y: 45, // was 60
+    text: "Net Generation (TWh)",
+    theme: chartTheme
+  });
 
-  const legend = svg
-    .append("g")
-    .attr("transform", `translate(${width - marginRight + 20}, ${marginTop})`);
-
-  const legendItem = legend
-    .selectAll("g")
-    .data(simpleSourceOrder)
-    .join("g")
-    .attr("transform", (d, i) => `translate(0, ${i * 22})`);
-
-  legendItem
-    .append("rect")
-    .attr("width", 14)
-    .attr("height", 14)
-    .attr("fill", (d) => color(d));
-
-  legendItem
-    .append("text")
-    .attr("x", 20)
-    .attr("y", 11)
-    .attr("font-size", 12)
-    .text((d) => d);
+  addLegend(svg, {
+    items: simpleSourceOrder,
+    color,
+    x: width - marginRight + 20,
+    y: marginTop,
+    theme: chartTheme
+  });
 
   const bisectDate = d3.bisector((d) => d.report_date).center;
 

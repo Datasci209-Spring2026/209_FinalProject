@@ -1,3 +1,14 @@
+import {
+  chartTheme,
+  applyBaseSvgStyle,
+  addStandardTitle,
+  styleBottomAxis,
+  addXAxisLabel,
+  addYAxisLabel,
+  addLegend,
+  createTooltip
+} from "./chartTheme.js";
+
 export function renderChart3({
   container,
   annualSimpleData,
@@ -9,7 +20,7 @@ export function renderChart3({
   const width = 1400;
   const height = 760;
 
-  const marginTop = 60;
+  const marginTop = 80; // was 100
   const marginRight = 210;
   const marginBottom = 70;
   const marginLeft = 110;
@@ -33,28 +44,11 @@ export function renderChart3({
     .create("svg")
     .attr("viewBox", [0, 0, width, height])
     .attr("width", width)
-    .attr("height", height)
-    .style("max-width", "100%")
-    .style("height", "auto")
-    .style("font", "12px sans-serif");
+    .attr("height", height);
 
-  d3.selectAll(".chart3-tooltip").remove();
+  applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = d3
-    .create("div")
-    .attr("class", "chart3-tooltip")
-    .style("position", "absolute")
-    .style("pointer-events", "none")
-    .style("background", "rgba(255,255,255,0.96)")
-    .style("border", "1px solid #ccc")
-    .style("border-radius", "4px")
-    .style("padding", "8px 10px")
-    .style("font", "12px sans-serif")
-    .style("line-height", "1.4")
-    .style("box-shadow", "0 2px 6px rgba(0,0,0,0.15)")
-    .style("visibility", "hidden");
-
-  document.body.appendChild(tooltip.node());
+  const tooltip = createTooltip("chart3-tooltip", chartTheme);
 
   const color = d3
     .scaleOrdinal()
@@ -63,37 +57,14 @@ export function renderChart3({
 
   const chartCenterX = marginLeft + innerWidth / 2;
 
-  const title = svg
-    .append("text")
-    .attr("x", chartCenterX)
-    .attr("y", 24)
-    .attr("text-anchor", "middle");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "0em")
-    .attr("font-size", 16)
-    .attr("font-weight", "bold")
-    .text(
-      "US Net Power Generation by Energy Source - Annual Change in TWh and CAGR"
-    );
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.4em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Monthly From 2001 to 2024");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.2em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Source: EIA Form 923 Monthly Reports");
+  addStandardTitle(svg, {
+    centerX: chartCenterX,
+    y: 20,
+    title: "US Net Power Generation by Energy Source - Annual Change in TWh and CAGR",
+    subtitle1: "Monthly From 2001 to 2024",
+    subtitle2: "Source: EIA Form 923 Monthly Reports",
+    theme: chartTheme
+  });
 
   const plot = svg
     .append("g")
@@ -127,49 +98,63 @@ export function renderChart3({
     .append("g")
     .attr("transform", `translate(0,${topPanelHeight + panelGap})`);
 
-  const topGrid = topPanel.append("g");
-  topGrid.call(
+  const topGrid = topPanel.append("g").call(
     d3
       .axisLeft(topY)
       .ticks(8)
-      .tickSize(-innerWidth)
       .tickFormat((d) => d3.format(",.0f")(d / 1e6))
   );
 
-  topGrid.select(".domain").remove();
-  topGrid.selectAll(".tick line").attr("stroke-opacity", 0.12);
-  topGrid.selectAll(".tick text").attr("font-size", 12);
+  topGrid.selectAll(".tick line").remove();
+  topGrid.call((g) =>
+    g
+      .selectAll(".tick")
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", innerWidth)
+      .attr("stroke", "currentColor")
+      .attr("stroke-opacity", 0.12)
+  );
 
-  const bottomGrid = bottomPanel.append("g");
-  bottomGrid.call(
+  topGrid
+    .call((g) => g.selectAll(".tick text").style("font-size", `${chartTheme.axis.tickSize}px`))
+    .call((g) => g.select(".domain").remove());
+
+  const bottomGrid = bottomPanel.append("g").call(
     d3
       .axisLeft(bottomY)
       .tickValues([-0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3])
-      .tickSize(-innerWidth)
       .tickFormat(d3.format(".1%"))
   );
 
-  bottomGrid.select(".domain").remove();
-  bottomGrid.selectAll(".tick line").attr("stroke-opacity", 0.12);
-  bottomGrid.selectAll(".tick text").attr("font-size", 12);
+  bottomGrid.selectAll(".tick line").remove();
+  bottomGrid.call((g) =>
+    g
+      .selectAll(".tick")
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", innerWidth)
+      .attr("stroke", "currentColor")
+      .attr("stroke-opacity", 0.12)
+  );
 
-  topPanel
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("x", -(topPanelHeight / 2))
-    .attr("y", -50)
-    .attr("text-anchor", "middle")
-    .attr("font-size", 12)
-    .text("Net Generation (TWh)");
+  bottomGrid
+    .call((g) => g.selectAll(".tick text").style("font-size", `${chartTheme.axis.tickSize}px`))
+    .call((g) => g.select(".domain").remove());
 
-  bottomPanel
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("x", -(bottomPanelHeight / 2))
-    .attr("y", -50)
-    .attr("text-anchor", "middle")
-    .attr("font-size", 12)
-    .text("CAGR");
+  addYAxisLabel(topPanel, {
+    x: -(topPanelHeight / 2),
+    y: -70,
+    text: "Net Generation (TWh)",
+    theme: chartTheme
+  });
+
+  addYAxisLabel(bottomPanel, {
+    x: -(bottomPanelHeight / 2),
+    y: -70,
+    text: "CAGR",
+    theme: chartTheme
+  });
 
   const annualBySource = d3.group(annualSimpleData, (d) => d.source);
   const cagrBySource = new Map(cagrSimpleData.map((d) => [d.source, d]));
@@ -190,9 +175,9 @@ export function renderChart3({
     facetTop
       .append("text")
       .attr("x", facetWidth / 2)
-      .attr("y", 24)
+      .attr("y", 20) // was 24
       .attr("text-anchor", "middle")
-      .attr("font-size", 12)
+      .attr("font-size", chartTheme.axis.tickSize + 2) // added + 2 to increase font size
       .attr("font-weight", "bold")
       .text(source);
 
@@ -222,18 +207,19 @@ export function renderChart3({
       .tickValues(tickValues)
       .tickFormat(d3.utcFormat("%Y"));
 
-    facetBottom
+    const xAxisGroup = facetBottom
       .append("g")
       .attr("transform", `translate(0,${bottomPanelHeight})`)
-      .call(xAxis)
-      .call((g) => g.select(".domain").remove())
-      .call((g) =>
-        g
-          .selectAll(".tick text")
-          .attr("font-size", 12)
-          .attr("text-anchor", (d) => (+d === leftDate ? "start" : "end"))
-          .attr("dx", (d) => (+d === leftDate ? "0.15em" : "-0.15em"))
-      );
+      .call(xAxis);
+
+    styleBottomAxis(xAxisGroup, chartTheme);
+
+    xAxisGroup.call((g) =>
+      g
+        .selectAll(".tick text")
+        .attr("text-anchor", (d) => (+d === leftDate ? "start" : "end"))
+        .attr("dx", (d) => (+d === leftDate ? "0.15em" : "-0.15em"))
+    );
 
     const zeroY = bottomY(0);
     facetBottom
@@ -270,13 +256,12 @@ export function renderChart3({
         .attr("stroke", "#b5b5b5")
         .attr("stroke-width", i < simpleSourceOrder.length - 1 ? 1 : 0);
 
-      facetBottom
-        .append("text")
-        .attr("x", facetWidth / 2)
-        .attr("y", bottomPanelHeight + 48)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 12)
-        .text("Year");
+      addXAxisLabel(facetBottom, {
+        x: facetWidth / 2,
+        y: bottomPanelHeight + 48,
+        text: "Year",
+        theme: chartTheme
+      });
     }
 
     const bisect = d3.bisector((d) => d.report_date).center;
@@ -309,14 +294,12 @@ export function renderChart3({
         const pct = total > 0 ? (value / total) * 100 : 0;
 
         tooltip
-          .html(
-            `
+          .html(`
             <div style="font-weight:600; margin-bottom:4px;">${source}</div>
             <div>Year: ${d3.utcFormat("%Y")(d.report_date)}</div>
             <div>Net Generation: ${d3.format(",.1f")(value / 1e6)} TWh</div>
             <div>Percent of Total: ${d3.format(".1f")(pct)}%</div>
-          `
-          )
+          `)
           .style("visibility", "visible")
           .style("left", `${event.pageX + 12}px`)
           .style("top", `${event.pageY + 12}px`);
@@ -336,8 +319,7 @@ export function renderChart3({
         if (!sourceCagr) return;
 
         tooltip
-          .html(
-            `
+          .html(`
             <div style="font-weight:600; margin-bottom:4px;">${source}</div>
             <div>CAGR: ${d3.format(".2%")(sourceCagr.cagr)}</div>
             <div>Start: ${d3.format(",.1f")(
@@ -346,8 +328,7 @@ export function renderChart3({
             <div>End: ${d3.format(",.1f")(
               (sourceCagr.end_value_mwh || 0) / 1e6
             )} TWh</div>
-          `
-          )
+          `)
           .style("visibility", "visible")
           .style("left", `${event.pageX + 12}px`)
           .style("top", `${event.pageY + 12}px`);
@@ -357,29 +338,13 @@ export function renderChart3({
       });
   });
 
-  const legend = svg
-    .append("g")
-    .attr("transform", `translate(${width - marginRight + 24}, ${marginTop})`);
-
-  const legendItem = legend
-    .selectAll("g")
-    .data(simpleSourceOrder)
-    .join("g")
-    .attr("transform", (d, i) => `translate(0, ${i * 22})`);
-
-  legendItem
-    .append("rect")
-    .attr("width", 14)
-    .attr("height", 14)
-    .attr("fill", (d) => color(d))
-    .attr("fill-opacity", 0.7);
-
-  legendItem
-    .append("text")
-    .attr("x", 20)
-    .attr("y", 11)
-    .attr("font-size", 12)
-    .text((d) => d);
+  addLegend(svg, {
+    items: simpleSourceOrder,
+    color,
+    x: width - marginRight + 24,
+    y: marginTop,
+    theme: chartTheme
+  });
 
   mount.appendChild(svg.node());
 }
