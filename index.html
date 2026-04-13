@@ -384,6 +384,11 @@ Usability Study Results: <a href="usability_study/Group_3_Usability_Study.docx" 
         moduleBase: "js",
         body: `
           <section class="chart-block">
+            <h3>Energy Consumption Choropleth Chart</h3>
+            <div id="consumption-choropleth" class="vis"></div>
+          </section>
+
+          <section class="chart-block">
             <h3>Summary of Usability Study Responses</h3>
             <p class="subsection-copy" style="margin-top: -4px; margin-bottom: 18px;">
               Google form link:
@@ -504,6 +509,10 @@ Usability Study Results: <a href="usability_study/Group_3_Usability_Study.docx" 
       window.__ACTIVE_DATA_PREFIX__ = config.dataPrefix || "";
       patchD3ForDataPrefix();
       clearTransientTooltips();
+
+      if (tabKey === "supplemental-visualizations") {
+        await vegaEmbed("#consumption-choropleth", "data/consumptionChloropleth.vl.json", embedOptions).catch(console.error);
+      }
 
       await loadDashboardModule(config.moduleBase, tabKey);
     }
