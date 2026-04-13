@@ -1,3 +1,10 @@
+import {
+  chartTheme,
+  applyBaseSvgStyle,
+  addStandardTitle,
+  createTooltip
+} from "./chartTheme.js";
+
 export function renderChart7({
   container,
   usAtlas,
@@ -10,7 +17,7 @@ export function renderChart7({
 }) {
   const width = 1100;
   const height = 700;
-  const marginTop = 20;
+  const marginTop = 30; // was 90
   const marginRight = 220;
   const marginBottom = 30;
   const marginLeft = 30;
@@ -23,68 +30,25 @@ export function renderChart7({
     .create("svg")
     .attr("viewBox", [0, 0, width, height])
     .attr("width", width)
-    .attr("height", height)
-    .style("max-width", "100%")
-    .style("height", "auto")
-    .style("font", "12px sans-serif");
+    .attr("height", height);
 
-  d3.selectAll(".chart7-tooltip").remove();
+  applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = d3
-    .create("div")
-    .attr("class", "chart7-tooltip")
-    .style("position", "absolute")
-    .style("pointer-events", "none")
-    .style("background", "rgba(255,255,255,0.96)")
-    .style("border", "1px solid #ccc")
-    .style("border-radius", "4px")
-    .style("padding", "8px 10px")
-    .style("font", "12px sans-serif")
-    .style("line-height", "1.4")
-    .style("box-shadow", "0 2px 6px rgba(0,0,0,0.15)")
-    .style("visibility", "hidden");
-
-  document.body.appendChild(tooltip.node());
+  const tooltip = createTooltip("chart7-tooltip", chartTheme);
 
   const chartCenterX = (width - marginRight + marginLeft) / 2;
 
-  const title = svg
-    .append("text")
-    .attr("x", chartCenterX)
-    .attr("y", 20)
-    .attr("text-anchor", "middle");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "0em")
-    .attr("font-size", 16)
-    .attr("font-weight", "bold")
-    .text(`US Power Plants by Dominant Energy Source — ${selectedPlantSource}`);
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.4em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text(`Annual View for ${selectedPlantYear}`);
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.2em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Dot size reflects total annual generation.");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.2em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Source: EIA Form 923 / PUDL");
+  addStandardTitle(svg, {
+    centerX: chartCenterX,
+    y: 20,
+    title: "US Power Plants by Dominant Energy Source — Solar",
+    subtitles: [
+      "Annual View for 2024",
+      "Dot size reflects total annual generation.",
+      "Source: EIA Form 923 / PUDL"
+    ],
+    theme: chartTheme
+  });
 
   const states = topojson.feature(usAtlas, usAtlas.objects.states);
   const nation = topojson.mesh(usAtlas, usAtlas.objects.nation);
@@ -131,7 +95,7 @@ export function renderChart7({
     .attr("stroke-width", 1)
     .attr("d", path);
 
-  const pointColor = simpleEnergyColors[selectedPlantSource];
+  const pointColor = simpleEnergyColors[selectedPlantSource] || "#4E79A7";
 
   const plotted = chart7Data
     .map((d) => {
@@ -157,8 +121,7 @@ export function renderChart7({
     .attr("stroke-width", 0.4)
     .on("mousemove", function (event, d) {
       tooltip
-        .html(
-          `
+        .html(`
           <div style="font-weight:600; margin-bottom:4px;">
             ${d.plant_name_eia || "Unknown Plant"}
           </div>
@@ -170,11 +133,10 @@ export function renderChart7({
           )} TWh</div>
           <div>Installed Capacity: ${
             d.installed_capacity_mw != null
-              ? d3.format(",.0f")(d.installed_capacity_mw) + " MW"
+              ? `${d3.format(",.0f")(d.installed_capacity_mw)} MW`
               : "N/A"
           }</div>
-        `
-        )
+        `)
         .style("visibility", "visible")
         .style("left", `${event.pageX + 12}px`)
         .style("top", `${event.pageY + 12}px`);
@@ -183,8 +145,8 @@ export function renderChart7({
       tooltip.style("visibility", "hidden");
     });
 
-  const legendX = width - marginRight;
-  const legendY = marginTop + 70;
+  const legendX = width - marginRight + 10; // added + 10
+  const legendY = marginTop + 90;
 
   const legendValues = (() => {
     const maxVal = d3.max(chart7Data, (d) => d.total_generation_mwh) || 1;
@@ -202,8 +164,8 @@ export function renderChart7({
     .append("text")
     .attr("x", legendX)
     .attr("y", legendY - 18)
-    .attr("font-size", 12)
-    .attr("font-weight", "bold")
+    .attr("font-size", chartTheme.axis.labelSize)
+    .attr("font-weight", chartTheme.axis.labelWeight)
     .text("Annual Generation");
 
   const sizeLegend = svg
@@ -240,7 +202,7 @@ export function renderChart7({
     .attr("x", 65)
     .attr("y", (d) => d.y)
     .attr("dy", "0.35em")
-    .attr("font-size", 11)
+    .attr("font-size", chartTheme.legend.textSize)
     .text((d) => `${d3.format(",.1f")(d.value / 1e6)} TWh`);
 
   const totalGenerationTwh =
@@ -250,7 +212,7 @@ export function renderChart7({
     .append("text")
     .attr("x", legendX)
     .attr("y", legendY + 230)
-    .attr("font-size", 12);
+    .attr("font-size", chartTheme.legend.textSize);
 
   legendStats
     .append("tspan")

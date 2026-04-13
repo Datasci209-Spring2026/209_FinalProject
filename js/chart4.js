@@ -1,3 +1,14 @@
+import {
+  chartTheme,
+  applyBaseSvgStyle,
+  addStandardTitle,
+  styleBottomAxis,
+  styleLeftAxis,
+  addYAxisLabel,
+  addLegend,
+  createTooltip
+} from "./chartTheme.js";
+
 export function renderChart4({
   container,
   stackedStateData,
@@ -8,16 +19,16 @@ export function renderChart4({
   const width = 1200;
   const height = 900;
 
-  const marginTop = 70;
-  const marginRight = 180;
+  const marginTop = 100; // was 110
+  const marginRight = 220;
   const marginBottom = 40;
-  const marginLeft = 70;
+  const marginLeft = 90;
 
   const cols = 3;
   const rows = 3;
 
   const facetGapX = 36;
-  const facetGapY = 50;
+  const facetGapY = 70; // was 50
 
   const plotWidth = width - marginLeft - marginRight;
   const plotHeight = height - marginTop - marginBottom;
@@ -33,28 +44,11 @@ export function renderChart4({
     .create("svg")
     .attr("viewBox", [0, 0, width, height])
     .attr("width", width)
-    .attr("height", height)
-    .style("max-width", "100%")
-    .style("height", "auto")
-    .style("font", "12px sans-serif");
+    .attr("height", height);
 
-  d3.selectAll(".chart4-tooltip").remove();
+  applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = d3
-    .create("div")
-    .attr("class", "chart4-tooltip")
-    .style("position", "absolute")
-    .style("pointer-events", "none")
-    .style("background", "rgba(255,255,255,0.96)")
-    .style("border", "1px solid #ccc")
-    .style("border-radius", "4px")
-    .style("padding", "8px 10px")
-    .style("font", "12px sans-serif")
-    .style("line-height", "1.4")
-    .style("box-shadow", "0 2px 6px rgba(0,0,0,0.15)")
-    .style("visibility", "hidden");
-
-  document.body.appendChild(tooltip.node());
+  const tooltip = createTooltip("chart4-tooltip", chartTheme);
 
   const color = d3
     .scaleOrdinal()
@@ -63,37 +57,15 @@ export function renderChart4({
 
   const chartCenterX = marginLeft + plotWidth / 2;
 
-  const title = svg
-    .append("text")
-    .attr("x", chartCenterX)
-    .attr("y", 14)
-    .attr("text-anchor", "middle");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "0em")
-    .attr("font-size", 16)
-    .attr("font-weight", "bold")
-    .text(
-      "US Net Power Generation by Energy Source — Top 9 States by Power Generation"
-    );
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.4em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Annual From 2001 to 2024");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.2em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Source: EIA Form 923 Monthly Reports");
+  addStandardTitle(svg, {
+    centerX: chartCenterX,
+    y: 20,
+    title:
+      "US Net Power Generation by Energy Source — Top 9 States by Power Generation",
+    subtitle1: "Annual From 2001 to 2024",
+    subtitle2: "Source: EIA Form 923 Monthly Reports",
+    theme: chartTheme
+  });
 
   const plot = svg
     .append("g")
@@ -145,9 +117,9 @@ export function renderChart4({
 
     g.append("text")
       .attr("x", facetWidth / 2)
-      .attr("y", -8)
+      .attr("y", -10)
       .attr("text-anchor", "middle")
-      .attr("font-size", 12)
+      .attr("font-size", chartTheme.subtitle.size)
       .attr("font-weight", "bold")
       .text(stateNameLookup[stateObj.state] || stateObj.state);
 
@@ -160,36 +132,39 @@ export function renderChart4({
       .attr("stroke-width", 0.3)
       .attr("d", area);
 
-    g.append("g")
+    const xAxisGroup = g
+      .append("g")
       .attr("transform", `translate(0,${facetHeight})`)
       .call(
         d3.axisBottom(x).tickValues(tickValues).tickFormat(d3.utcFormat("%Y"))
-      )
-      .call((g) => g.select(".domain").remove())
-      .call((g) =>
-        g
-          .selectAll(".tick text")
-          .attr("font-size", 11)
-          .attr("text-anchor", (d) => (+d === leftDate ? "start" : "end"))
-          .attr("dx", (d) => (+d === leftDate ? "0.15em" : "-0.15em"))
       );
 
-    g.append("g")
-      .call(
-        d3
-          .axisLeft(y)
-          .ticks(4)
-          .tickFormat((d) => d3.format(",.0f")(d / 1e6))
-      )
-      .call((g) => g.select(".domain").remove())
-      .call((g) =>
-        g
-          .selectAll(".tick line")
-          .clone()
-          .attr("x2", facetWidth)
-          .attr("stroke-opacity", 0.1)
-      )
-      .call((g) => g.selectAll(".tick text").attr("font-size", 11));
+    styleBottomAxis(xAxisGroup, chartTheme);
+
+    xAxisGroup.call((g) =>
+      g
+        .selectAll(".tick text")
+        .attr("font-size", chartTheme.axis.tickSize)
+        .attr("text-anchor", (d) => (+d === leftDate ? "start" : "end"))
+        .attr("dx", (d) => (+d === leftDate ? "0.15em" : "-0.15em"))
+    );
+
+    const yAxisGroup = g.append("g").call(
+      d3
+        .axisLeft(y)
+        .ticks(4)
+        .tickFormat((d) => d3.format(",.0f")(d / 1e6))
+    );
+
+    styleLeftAxis(yAxisGroup, {
+      gridWidth: facetWidth,
+      gridOpacity: 0.1,
+      theme: chartTheme
+    });
+
+    yAxisGroup.call((g) =>
+      g.selectAll(".tick text").attr("font-size", chartTheme.axis.tickSize)
+    );
 
     const bisectDate = d3.bisector((d) => d.report_date).center;
 
@@ -227,11 +202,7 @@ export function renderChart4({
         const rows = simpleSourceOrder.map((source) => {
           const value = d[source] || 0;
           const pct = total > 0 ? (value / total) * 100 : 0;
-          return {
-            source,
-            value,
-            pct
-          };
+          return { source, value, pct };
         });
 
         const stateLabel = stateNameLookup[stateObj.state] || stateObj.state;
@@ -275,40 +246,20 @@ export function renderChart4({
       });
   });
 
-  svg
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("x", -(marginTop + plotHeight / 2))
-    .attr("y", 18)
-    .attr("text-anchor", "middle")
-    .attr("font-size", 12)
-    .text("Net Generation (TWh)");
+  addYAxisLabel(svg, {
+    x: -(marginTop + plotHeight / 2),
+    y: 28,
+    text: "Net Generation (TWh)",
+    theme: chartTheme
+  });
 
-  const legend = svg
-    .append("g")
-    .attr(
-      "transform",
-      `translate(${width - marginRight + 20}, ${marginTop + 20})`
-    );
-
-  const legendItem = legend
-    .selectAll("g")
-    .data(simpleSourceOrder)
-    .join("g")
-    .attr("transform", (d, i) => `translate(0, ${i * 22})`);
-
-  legendItem
-    .append("rect")
-    .attr("width", 14)
-    .attr("height", 14)
-    .attr("fill", (d) => color(d));
-
-  legendItem
-    .append("text")
-    .attr("x", 20)
-    .attr("y", 11)
-    .attr("font-size", 12)
-    .text((d) => d);
+  addLegend(svg, {
+    items: simpleSourceOrder,
+    color,
+    x: width - marginRight + 30,
+    y: marginTop + 20,
+    theme: chartTheme
+  });
 
   mount.appendChild(svg.node());
 }

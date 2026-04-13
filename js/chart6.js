@@ -1,3 +1,10 @@
+import {
+  chartTheme,
+  applyBaseSvgStyle,
+  addStandardTitle,
+  createTooltip
+} from "./chartTheme.js";
+
 export function renderChart6({
   container,
   usAtlas,
@@ -10,7 +17,7 @@ export function renderChart6({
 }) {
   const width = 1100;
   const height = 720;
-  const marginTop = 70;
+  const marginTop = 20; // was 90
   const marginRight = 220;
   const marginBottom = 40;
   const marginLeft = 40;
@@ -23,60 +30,22 @@ export function renderChart6({
     .create("svg")
     .attr("viewBox", [0, 0, width, height])
     .attr("width", width)
-    .attr("height", height)
-    .style("max-width", "100%")
-    .style("height", "auto")
-    .style("font", "12px sans-serif");
+    .attr("height", height);
 
-  d3.selectAll(".chart6-tooltip").remove();
+  applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = d3
-    .create("div")
-    .attr("class", "chart6-tooltip")
-    .style("position", "absolute")
-    .style("pointer-events", "none")
-    .style("background", "rgba(255,255,255,0.96)")
-    .style("border", "1px solid #ccc")
-    .style("border-radius", "4px")
-    .style("padding", "8px 10px")
-    .style("font", "12px sans-serif")
-    .style("line-height", "1.4")
-    .style("box-shadow", "0 2px 6px rgba(0,0,0,0.15)")
-    .style("visibility", "hidden");
-
-  document.body.appendChild(tooltip.node());
+  const tooltip = createTooltip("chart6-tooltip", chartTheme);
 
   const chartCenterX = (width - marginRight + marginLeft) / 2;
 
-  const title = svg
-    .append("text")
-    .attr("x", chartCenterX)
-    .attr("y", 22)
-    .attr("text-anchor", "middle");
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "0em")
-    .attr("font-size", 16)
-    .attr("font-weight", "bold")
-    .text(`US Net Power Generation by State — ${selectedSource}`);
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.4em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text(`Annual View for ${selectedYear}`);
-
-  title
-    .append("tspan")
-    .attr("x", chartCenterX)
-    .attr("dy", "1.2em")
-    .attr("font-size", 12)
-    .attr("font-weight", "normal")
-    .text("Source: EIA Form 923 Monthly Reports");
+  addStandardTitle(svg, {
+    centerX: chartCenterX,
+    y: 20,
+    title: `US Net Power Generation by State — ${selectedSource}`,
+    subtitle1: `Annual View for ${selectedYear}`,
+    subtitle2: "Source: EIA Form 923 Monthly Reports",
+    theme: chartTheme
+  });
 
   const states = topojson
     .feature(usAtlas, usAtlas.objects.states)
@@ -127,16 +96,14 @@ export function renderChart6({
       const value = record?.net_generation_twh ?? 0;
 
       tooltip
-        .html(
-          `
+        .html(`
           <div style="font-weight:600; margin-bottom:4px;">
             ${stateName}
           </div>
           <div>Energy Source: ${selectedSource}</div>
           <div>Year: ${selectedYear}</div>
           <div>Generation: ${d3.format(",.1f")(value)} TWh</div>
-        `
-        )
+        `)
         .style("visibility", "visible")
         .style("left", `${event.pageX + 12}px`)
         .style("top", `${event.pageY + 12}px`);
@@ -161,10 +128,12 @@ export function renderChart6({
     .attr("stroke-width", 1)
     .attr("d", path);
 
+  // Custom threshold legend for choropleth
   const legendX = width - marginRight + 40;
-  const legendY = marginTop + 60;
+  const legendY = marginTop + 70;
   const swatchWidth = 18;
-  const swatchHeight = 22;
+  const swatchHeight = 18;
+  const legendItemGap = 24;
 
   const legendDomain = choroplethColorScale.domain();
   const binColors = choroplethColorScale.range();
@@ -182,8 +151,8 @@ export function renderChart6({
     .append("text")
     .attr("x", legendX)
     .attr("y", legendY - 18)
-    .attr("font-size", 12)
-    .attr("font-weight", "bold")
+    .attr("font-size", chartTheme.axis.labelSize)
+    .attr("font-weight", chartTheme.axis.labelWeight)
     .text("Generation (TWh)");
 
   const legend = svg
@@ -194,12 +163,12 @@ export function renderChart6({
     .selectAll("g")
     .data(legendBins)
     .join("g")
-    .attr("transform", (d, i) => `translate(0, ${i * 24})`);
+    .attr("transform", (d, i) => `translate(0, ${i * legendItemGap})`);
 
   legendItem
     .append("rect")
     .attr("width", swatchWidth)
-    .attr("height", swatchHeight - 4)
+    .attr("height", swatchHeight)
     .attr("fill", (d) => d.color)
     .attr("stroke", "#ccc");
 
@@ -207,7 +176,7 @@ export function renderChart6({
     .append("text")
     .attr("x", swatchWidth + 8)
     .attr("y", 13)
-    .attr("font-size", 11)
+    .attr("font-size", chartTheme.legend.textSize)
     .text(
       (d) => `${d3.format(",.0f")(d.start)} – ${d3.format(",.0f")(d.end)}`
     );

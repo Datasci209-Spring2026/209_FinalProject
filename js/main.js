@@ -1,4 +1,4 @@
-import { renderChart1 } from "./chart1.js";
+// import { renderChart1 } from "./chart1.js";
 import { renderChart2 } from "./chart2.js";
 import { renderChart3 } from "./chart3.js";
 import { renderChart4 } from "./chart4.js";
@@ -6,6 +6,9 @@ import { renderChart5 } from "./chart5.js";
 import { renderChart5v2 } from "./chart5_v2.js";
 import { renderChart6 } from "./chart6.js";
 import { renderChart7 } from "./chart7.js";
+import { renderLikertChart } from "./likert.js";
+
+const activeTab = new URL(import.meta.url).searchParams.get("tab");
 
 // load US atlas JSON for charts 6/7
 const usAtlas = await d3.json(
@@ -185,9 +188,6 @@ const simpleEnergyColors = {
   "Other": "#79706E"
 };
 
-
-// reformat the parse data functions for all charts
-// load energy data for charts 1-6
 function parseEnergyRow(d) {
   return {
     ...d,
@@ -199,7 +199,6 @@ function parseEnergyRow(d) {
   };
 }
 
-// load plant level data for chart 7
 function parsePlantRow(d) {
   return {
     ...d,
@@ -217,8 +216,15 @@ function parsePlantRow(d) {
   };
 }
 
-// load datafiles
 async function init() {
+  // Supplemental tab only needs the Likert chart
+  if (activeTab === "supplemental-visualizations") {
+    renderLikertChart({
+      container: "#likert-chart"
+    });
+    return;
+  }
+
   const energyData = await d3.csv(
     "data/eia_monthly_generation_by_source.csv",
     parseEnergyRow
@@ -234,7 +240,6 @@ async function init() {
     parsePlantRow
   );
 
-  // build stacked annual inputs
   const stackedInputYearly = (() => {
     const byYear = d3.rollup(
       energyData,
@@ -251,8 +256,6 @@ async function init() {
       (d) => d3.utcYear.floor(d.report_date)
     );
 
-	// format dates and cutoff at 12/31/24 
-	// 2025 data is incomplete
     return Array.from(byYear, ([date, values]) => ({
       report_date: date,
       ...values
@@ -261,7 +264,6 @@ async function init() {
       .sort((a, b) => d3.ascending(a.report_date, b.report_date));
   })();
 
-  // create groupings of all energy sources
   const groupedEnergyData = energyData.map((d) => ({
     ...d,
     energy_source_group_simple:
@@ -280,7 +282,6 @@ async function init() {
         : "Other"
   }));
 
-  // create stacked annual data for grouped energy sources
   const stackedInputYearlySimple = (() => {
     const filtered = groupedEnergyData.filter(
       (d) => d.report_date <= new Date("2024-12-31")
@@ -374,7 +375,6 @@ async function init() {
     });
   })();
 
-  // create grouped sources for state level data
   const groupedStateData = dataState.map((d) => ({
     ...d,
     energy_source_group_simple:
@@ -639,13 +639,6 @@ async function init() {
       .domain([0, d3.max(chart7Data, (d) => d.total_generation_mwh) || 1])
       .range([1.5, 14]);
   }
-
-  renderChart1({
-    container: "#chart1",
-    stackedInputYearly,
-    sourceOrder,
-    energyColors
-  });
 
   renderChart2({
     container: "#chart2",
