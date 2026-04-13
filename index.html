@@ -82,6 +82,7 @@
       margin: 0 0 28px;
       color: var(--matt-muted);
       line-height: 1.5;
+      white-space: pre-line;
     }
 
     .dashboard-divider {
@@ -177,7 +178,7 @@
   <script>
     const embedOptions = {
       actions: false,
-      renderer: 'svg'
+      renderer: "svg"
     };
 
     const dashboardContent = `
@@ -368,19 +369,34 @@
       },
       "usability-study": {
         title: "Usability Study",
-        intro: "This tab preserves the current layout and routes chart assets through the usability_study folder.",
+        intro: `This tab preserves the current layout of the usability study website and routes chart assets through the usability_study folder.
+
+Usability Study Results: <a href="usability_study/Group_3_Usability_Study.docx" target="_blank" rel="noopener noreferrer">Group_3_Usability_Study.docx</a>`,
         type: "dashboard",
         dataPrefix: "usability_study",
         moduleBase: "usability_study/js"
       },
       "supplemental-visualizations": {
         title: "Supplemental Visualizations",
-        intro: "Use this tab for additional charts, alternate views, or exploratory visuals that support the final project.",
-        type: "placeholder",
+        intro: "Additional charts and alternate views that support the final project findings.",
+        type: "custom",
+        dataPrefix: "",
+        moduleBase: "js",
         body: `
-          <div class="placeholder-card">
-            Add your supplemental charts, static images, or embedded dashboards here.
-          </div>
+          <section class="chart-block">
+            <h3>Summary of Usability Study Responses</h3>
+            <p class="subsection-copy" style="margin-top: -4px; margin-bottom: 18px;">
+              Google form link:
+              <a
+                href="https://forms.gle/JJaWbMGqCpNdPFAw5"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://forms.gle/JJaWbMGqCpNdPFAw5
+              </a>
+            </p>
+            <div id="likert-chart"></div>
+          </section>
         `
       },
       "sources-and-methods": {
@@ -476,6 +492,22 @@
       await loadDashboardModule(config.moduleBase, tabKey);
     }
 
+    async function renderCustom(config, tabKey) {
+      content.innerHTML = `
+        <section>
+          <h2 class="tab-panel-title">${config.title}</h2>
+          <p class="tab-panel-intro">${config.intro}</p>
+          ${config.body}
+        </section>
+      `;
+
+      window.__ACTIVE_DATA_PREFIX__ = config.dataPrefix || "";
+      patchD3ForDataPrefix();
+      clearTransientTooltips();
+
+      await loadDashboardModule(config.moduleBase, tabKey);
+    }
+
     function renderPlaceholder(config) {
       removeOldModuleScript();
       content.innerHTML = `
@@ -497,6 +529,8 @@
 
       if (config.type === "dashboard") {
         await renderDashboard(tabKey, config);
+      } else if (config.type === "custom") {
+        await renderCustom(config, tabKey);
       } else {
         renderPlaceholder(config);
       }
@@ -507,6 +541,6 @@
     });
 
     setActiveTab("final-project");
-  </script>  </script>
+  </script>
 </body>
 </html>
