@@ -553,12 +553,53 @@ Usability Study Results: <a href="usability_study/Group_3_Usability_Study.docx" 
       },
       "sources-and-methods": {
         title: "Sources and Methods",
-        intro: "Use this tab for methodology notes, data provenance, cleaning decisions, and chart design rationale.",
+        intro: "This project integrates multiple authoritative datasets to examine global greenhouse gas emissions, energy consumption, and U.S. power generation. The visualizations are designed to connect global climate outcomes with the underlying energy systems that shape them, moving from emissions, to energy demand, to detailed electricity production in the United States.",
         type: "placeholder",
         body: `
-          <div class="placeholder-card">
-            Add your methods write-up, source citations, assumptions, and data-processing notes here.
-          </div>
+		  <div class="placeholder-card">
+		    <h3 class="subsection-title">Data Sources</h3>
+		    <p class="subsection-copy">
+		      Global emissions data are drawn from the <strong>Emissions Database for Global Atmospheric Research (EDGAR)</strong>, maintained by the European Commission. EDGAR provides country-level greenhouse gas emissions estimates over time, supporting cross-country comparison and long-run trend analysis.
+		    </p>		  
+		    <p class="subsection-copy">
+		      Global energy consumption data are sourced from <strong>Our World in Data</strong>, specifically Hannah Ritchie, Pablo Rosado, and Max Roser (2023), <em>“Energy”</em>, published online at OurWorldinData.org.
+		    </p>		  
+		    <p class="subsection-copy">
+		      U.S. electricity generation data are primarily sourced from the <strong>U.S. Energy Information Administration (EIA) Form EIA-923 monthly reports</strong>, which provide detailed plant-level information on electricity generation by fuel type across the United States. These data serve as the foundation for all U.S.-focused analyses in the project.
+		    </p>
+		    <p class="subsection-copy">
+		      To support geographic visualizations, this project also incorporates city population and geolocation data from <strong>SimpleMaps</strong>, which are used to map cities near power plant locations.
+		    </p>
+
+		    <h3 class="subsection-title">Data Processing and Transformation</h3>
+		    <p class="subsection-copy">
+		      Data preparation was conducted primarily in Python. Global emissions data from EDGAR were analyzed and visualized using <strong>Tableau</strong>. Energy consumption charts were processed in Python and built using <strong>Altair and Vega-Lite</strong>, allowing for reproducible and declarative chart construction. Across all datasets, preprocessing steps included handling missing values, filtering incomplete reporting periods, and ensuring consistent labeling and categorization of variables.
+		    </p>		  
+		    <p class="subsection-copy">
+		      For U.S. power generation, raw EIA-923 data were accessed using the <strong>Public Utility Data Liberation (PUDL)</strong> framework, which provides a standardized interface for extracting and working with EIA data programmatically. Monthly records were transformed into analysis-ready datasets and aggregated to monthly and annual levels depending on the needs of each visualization.
+		    </p>
+		    <p class="subsection-copy">
+		      Energy sources in the U.S. data were also consolidated into simplified categories such as Solar, Wind, Hydro, Nuclear, Coal, Natural Gas, and Other in order to improve interpretability and maintain consistency across charts. Generation values were standardized and converted into terawatt-hours (TWh), and additional derived metrics such as percent share of total generation and compound annual growth rates (CAGR) were calculated to support comparative and longitudinal analysis.
+		    </p>
+
+		    <h3 class="subsection-title">Visualization Design and Implementation</h3>
+		    <p class="subsection-copy">
+		      Global emissions visualizations were implemented using <strong>Tableau Public</strong>, while global energy consumption charts were built using <strong>Altair and Vega-Lite</strong>. Across the project, design choices prioritize clarity, consistency, and comparability, including standardized color encodings, readable axis formatting, and a narrative layout that guides the user from high-level patterns to more detailed infrastructure-level views.
+		    </p>
+		    <p class="subsection-copy">
+		      All U.S. energy visualizations were developed using <strong>D3.js</strong>, initially prototyped in Observable notebooks and later converted into modular JavaScript files for integration into the final project website. These charts emphasize interactivity through the use of tooltips, dropdown menus, sliders, and map-based exploration.
+		    </p>
+
+		    <h3 class="subsection-title">Website and Deployment</h3>
+		    <p class="subsection-copy">
+		      The final project website was built using <strong>HTML, CSS, and JavaScript</strong>, with a modular structure that supports D3, Vega-Lite, and Tableau-based visualizations within a single interface. The site is hosted on <strong>Vercel</strong> and served through a lightweight <strong>Flask</strong> configuration for routing and deployment. This structure supports both static assets and interactive visualizations while maintaining a clean and responsive presentation.
+		    </p>
+
+		    <h3 class="subsection-title">Analytical Framework</h3>
+		    <p class="subsection-copy">
+		      The project follows a three-part analytical structure. The first section establishes the scale and distribution of greenhouse gas emissions. The second examines how energy consumption contributes to those outcomes and how low-carbon energy use varies across countries. The third focuses on the United States as a case study, tracing how electricity generation has evolved over time at the national, state, and plant levels. Together, these sections are intended to connect global climate patterns to the energy infrastructure that drives them.
+		    </p>
+		  </div>
         `
       }
     };
