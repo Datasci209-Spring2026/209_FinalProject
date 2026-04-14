@@ -16,14 +16,10 @@
       --tab-active: #111827;
       --tab-active-text: #ffffff;
     }
-	
-	header {
-      position: fixed;
-	  max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 24px 72px;
-	  display: flex;
-	}
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -32,14 +28,30 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: var(--matt-bg);
+      border-bottom: 1px solid var(--matt-border);
+      z-index: 1000;
+    }
+
+    .site-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 24px 20px;
+    }
+
     .page {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 40px 24px 72px;
+      padding: 220px 24px 72px;
     }
 
-    .page > h1 {
-      margin-bottom: 10px;
+    .page-title {
+      margin: 0 0 10px;
     }
 
     .page-intro {
@@ -52,7 +64,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin: 0 0 28px;
+      margin: 0;
       padding-bottom: 18px;
       border-bottom: 1px solid var(--matt-border);
     }
@@ -161,9 +173,9 @@
   </style>
 </head>
 <body>
-  <main class="page">
-    <header>
-      <h1>Global Greenhouse Gas Emissions, Energy Consumption, and US Energy Production</h1>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <h1 class="page-title">Global Greenhouse Gas Emissions, Energy Consumption, and US Energy Production</h1>
       <p class="page-intro">
         This visualization was created to aid students and the general public understand the sources of greenhouse gas emissions, the demands of global energy consumption, and in-depth review of domestic US energy production.
       </p>
@@ -174,11 +186,12 @@
         <button class="tab-button" data-tab="sources-and-methods">Sources and Methods</button>
         <button class="tab-button" data-tab="usability-study">Usability Study</button>
       </nav>
+    </div>
+  </header>
 
-      <div id="tab-content"></div>
-    </header>
+  <main class="page">
+    <div id="tab-content"></div>
   </main>
-
 
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
@@ -210,7 +223,7 @@
           <h3>Chart 1</h3>
           <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/CombinedSheet12"></tableau-viz>
         </section>
-		  
+
       <hr class="dashboard-divider" />
 
         <section class="chart-block">
@@ -221,8 +234,8 @@
 
 	  <section>
 		<p class="subsection-copy">
-		
-		
+
+
 		  The emissions shown above are closely tied to the way societies use energy. The power industry sits at the center of the climate story, since it makes up the largest single share of global greenhouse gas emissions. By looking at how much energy countries use, how demand changes over time, and the extent to which that demand is met by low-carbon sources, we can better understand both what drives emissions and where opportunities for a cleaner energy future are already taking shape.
 		</p>
 
@@ -251,9 +264,9 @@
               Low-carbon energy includes sources such as wind, solar, hydro, and nuclear that generate little to no direct greenhouse gas emissions during operation.
             </p>
         </section>
-		  
+
       <hr class="dashboard-divider" />
-		  
+
         <section class="chart-block">
           <h3>Chart 4</h3>
           <p class="subsection-copy">
@@ -268,8 +281,8 @@
 
 	  <section>
 		<p class="subsection-copy">
-		
-		
+
+
 		  These results help explain broad global patterns in energy consumption, but they also point to an important national case study. The United States has consistently had a relatively low low-carbon energy share, especially compared with outliers like Norway. That raises the next question: what in the U.S. energy system helps explain this difference? To answer that, the next section shifts from energy consumption to energy production, focusing on how electricity is generated in the United States and how the balance between fossil fuels and low-carbon sources has changed over time.
 		</p>
 
@@ -287,7 +300,7 @@
         <p class="subsection-copy">
           Interactive D3 charts and maps for U.S. power generation by state and energy source.
         </p>
-		  
+
         <section class="chart-section">
           <h3>Chart 5 - U.S. Energy Sources Overview</h3>
           <p class="subsection-copy">
@@ -520,7 +533,7 @@ Usability Study Results: <a href="usability_study/Group_3_Usability_Study.docx" 
             <h3>Energy Consumption Choropleth Chart</h3>
             <div id="consumption-choropleth" class="vis"></div>
           </section>
-		  
+
 		  <hr class="dashboard-divider" />
 
           <section class="chart-block">
