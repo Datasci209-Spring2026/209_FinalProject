@@ -6,13 +6,18 @@ import { renderChart5 } from "./chart5.js";
 import { renderChart5v2 } from "./chart5_v2.js";
 import { renderChart6 } from "./chart6.js";
 import { renderChart7 } from "./chart7.js";
+import { renderChart8 } from "./chart8.js";
 import { renderLikertChart } from "./likert.js";
 
 const activeTab = new URL(import.meta.url).searchParams.get("tab");
 
-// load US atlas JSON for charts 6/7
+// load US atlas JSON for charts 6/7/8
 const usAtlas = await d3.json(
   "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json"
+);
+
+const usAtlasCounties = await d3.json(
+  "https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json"
 );
 
 // state abbreviation and name lookup
@@ -69,7 +74,7 @@ const stateNameLookup = {
   WY: "Wyoming"
 };
 
-// state abbrevation to FIPS
+// state abbreviation to FIPS
 const stateAbbrevToFips = {
   AL: "01",
   AK: "02",
@@ -156,16 +161,16 @@ const simpleSourceOrder = [
   "Other"
 ];
 
-// defined Tableau 20 color palate to enrergy source map
+// defined Tableau 20 color palette to energy source map
 const energyColors = {
-  "Solar": "#F28E2B",
-  "Wind": "#8CD17D",
+  Solar: "#F28E2B",
+  Wind: "#8CD17D",
   "Hydro - Conventional": "#4E79A7",
   "Hydro Pumped Storage": "#A0CBE8",
-  "Geothermal": "#59A14F",
+  Geothermal: "#59A14F",
   "Other Renewables": "#FFBE7D",
-  "Nuclear": "#F1CE63",
-  "Coal": "#E15759",
+  Nuclear: "#F1CE63",
+  Coal: "#E15759",
   "Natural Gas": "#D4A6C8",
   "Other Gas": "#499894",
   "Landfill Gas": "#86BCB6",
@@ -177,15 +182,15 @@ const energyColors = {
   "Other / Unknown": "#79706E"
 };
 
-// defined Tablea 20 color palate to grouped energy source map
+// defined Tableau 20 color palette to grouped energy source map
 const simpleEnergyColors = {
-  "Solar": "#F28E2B",
-  "Wind": "#8CD17D",
-  "Hydro": "#4E79A7",
-  "Nuclear": "#F1CE63",
-  "Coal": "#E15759",
+  Solar: "#F28E2B",
+  Wind: "#8CD17D",
+  Hydro: "#4E79A7",
+  Nuclear: "#F1CE63",
+  Coal: "#E15759",
   "Natural Gas": "#D4A6C8",
-  "Other": "#79706E"
+  Other: "#79706E"
 };
 
 function parseEnergyRow(d) {
@@ -216,6 +221,16 @@ function parsePlantRow(d) {
   };
 }
 
+function parseCityRow(d) {
+  return {
+    ...d,
+    lat: d.lat == null || d.lat === "" ? null : +d.lat,
+    lng: d.lng == null || d.lng === "" ? null : +d.lng,
+    population:
+      d.population == null || d.population === "" ? null : +d.population
+  };
+}
+
 async function init() {
   // Supplemental tab only needs the Likert chart
   if (activeTab === "supplemental-visualizations") {
@@ -239,6 +254,8 @@ async function init() {
     "data/eia_plant_year_dominant_source_2001_2024.csv",
     parsePlantRow
   );
+
+  const usCities = await d3.csv("data/uscities.csv", parseCityRow);
 
   const stackedInputYearly = (() => {
     const byYear = d3.rollup(
@@ -509,53 +526,102 @@ async function init() {
     })).sort((a, b) => d3.ascending(a.report_date, b.report_date));
   }
 
-  const selectedStateSelect = document.getElementById("selectedState");
-  const selectedStateLeftSelect = document.getElementById("selectedStateLeft");
-  const selectedStateRightSelect = document.getElementById("selectedStateRight");
-  const selectedSourceSelect = document.getElementById("selectedSource");
-  const selectedYearInput = document.getElementById("selectedYear");
-  const selectedYearValue = document.getElementById("selectedYearValue");
-  const selectedPlantSourceSelect = document.getElementById("selectedPlantSource");
-  const selectedPlantYearInput = document.getElementById("selectedPlantYear");
-  const selectedPlantYearValue = document.getElementById("selectedPlantYearValue");
+  function getChart7Data(selectedPlantYear, selectedPlantSource) {
+    return plantYearData.filter(
+      (d) =>
+        d.report_year === selectedPlantYear &&
+        d.dominant_energy_group === selectedPlantSource &&
+        d.latitude != null &&
+        d.longitude != null &&
+        !isNaN(d.latitude) &&
+        !isNaN(d.longitude) &&
+        d.total_generation_mwh != null &&
+        !isNaN(d.total_generation_mwh)
+    );
+  }
 
-  statesSorted.forEach((state) => {
-    const option = document.createElement("option");
-    option.value = state;
-    option.textContent = stateNameLookup[state] || state;
-    if (state === "TX") option.selected = true;
-    selectedStateSelect.appendChild(option);
-  });
+  function getChart7Radius(chart7Data) {
+    return d3
+      .scaleSqrt()
+      .domain([0, d3.max(chart7Data, (d) => d.total_generation_mwh) || 1])
+      .range([1.5, 14]);
+  }
 
-  statesSorted.forEach((state) => {
-    const optionLeft = document.createElement("option");
-    optionLeft.value = state;
-    optionLeft.textContent = stateNameLookup[state] || state;
-    if (state === "TX") optionLeft.selected = true;
-    selectedStateLeftSelect.appendChild(optionLeft);
+  function getChart8Context(
+    selectedMapState,
+    selectedSTPlantSource,
+    selectedSTPlantYear
+  ) {
+    const allStates = topojson.feature(usAtlas, usAtlas.objects.states).features;
+    const selectedStateFips = stateAbbrevToFips[selectedMapState];
 
-    const optionRight = document.createElement("option");
-    optionRight.value = state;
-    optionRight.textContent = stateNameLookup[state] || state;
-    if (state === "CA") optionRight.selected = true;
-    selectedStateRightSelect.appendChild(optionRight);
-  });
+    const selectedStateFeature = allStates.find(
+      (d) => String(d.id).padStart(2, "0") === selectedStateFips
+    );
 
-  simpleSourceOrder.forEach((source) => {
-    const option = document.createElement("option");
-    option.value = source;
-    option.textContent = source;
-    if (source === "Solar") option.selected = true;
-    selectedSourceSelect.appendChild(option);
-  });
+    const selectedCounties = topojson
+      .feature(usAtlasCounties, usAtlasCounties.objects.counties)
+      .features
+      .filter((d) =>
+        String(d.id).padStart(5, "0").startsWith(selectedStateFips)
+      );
 
-  simpleSourceOrder.forEach((source) => {
-    const option = document.createElement("option");
-    option.value = source;
-    option.textContent = source;
-    if (source === "Solar") option.selected = true;
-    selectedPlantSourceSelect.appendChild(option);
-  });
+    const selectedCountyMesh = topojson.mesh(
+      usAtlasCounties,
+      usAtlasCounties.objects.counties,
+      (a, b) => {
+        if (!a || !b) return false;
+        const aId = String(a.id).padStart(5, "0");
+        const bId = String(b.id).padStart(5, "0");
+        return (
+          a !== b &&
+          aId.startsWith(selectedStateFips) &&
+          bId.startsWith(selectedStateFips)
+        );
+      }
+    );
+
+    const statePlantMapData = plantYearData.filter(
+      (d) =>
+        +d.report_year === +selectedSTPlantYear &&
+        d.dominant_energy_group === selectedSTPlantSource &&
+        d.state === selectedMapState &&
+        d.latitude != null &&
+        d.longitude != null &&
+        !isNaN(d.latitude) &&
+        !isNaN(d.longitude) &&
+        d.total_generation_mwh != null &&
+        !isNaN(d.total_generation_mwh)
+    );
+
+    const statePlantRadius = d3
+      .scaleSqrt()
+      .domain([0, d3.max(statePlantMapData, (d) => d.total_generation_mwh) || 1])
+      .range([2, 18]);
+
+    const topCitiesInState = usCities
+      .filter(
+        (d) =>
+          (d.state_id || d.state) === selectedMapState &&
+          d.lat != null &&
+          d.lng != null &&
+          !isNaN(d.lat) &&
+          !isNaN(d.lng) &&
+          d.population != null &&
+          !isNaN(d.population)
+      )
+      .sort((a, b) => d3.descending(+a.population, +b.population))
+      .slice(0, 10);
+
+    return {
+      selectedStateFeature,
+      selectedCounties,
+      selectedCountyMesh,
+      statePlantMapData,
+      statePlantRadius,
+      topCitiesInState
+    };
+  }
 
   const choroplethData = (() => {
     const filtered = groupedStateData.filter(
@@ -619,26 +685,83 @@ async function init() {
       .range(d3.quantize(d3.interpolateRgb(light, dark), 6));
   }
 
-  function getChart7Data(selectedPlantYear, selectedPlantSource) {
-    return plantYearData.filter(
-      (d) =>
-        d.report_year === selectedPlantYear &&
-        d.dominant_energy_group === selectedPlantSource &&
-        d.latitude != null &&
-        d.longitude != null &&
-        !isNaN(d.latitude) &&
-        !isNaN(d.longitude) &&
-        d.total_generation_mwh != null &&
-        !isNaN(d.total_generation_mwh)
-    );
-  }
+  // existing control references
+  const selectedStateSelect = document.getElementById("selectedState");
+  const selectedStateLeftSelect = document.getElementById("selectedStateLeft");
+  const selectedStateRightSelect = document.getElementById("selectedStateRight");
+  const selectedSourceSelect = document.getElementById("selectedSource");
+  const selectedYearInput = document.getElementById("selectedYear");
+  const selectedYearValue = document.getElementById("selectedYearValue");
+  const selectedPlantSourceSelect = document.getElementById("selectedPlantSource");
+  const selectedPlantYearInput = document.getElementById("selectedPlantYear");
+  const selectedPlantYearValue = document.getElementById("selectedPlantYearValue");
 
-  function getChart7Radius(chart7Data) {
-    return d3
-      .scaleSqrt()
-      .domain([0, d3.max(chart7Data, (d) => d.total_generation_mwh) || 1])
-      .range([1.5, 14]);
-  }
+  // chart 8 controls
+  const selectedMapStateSelect = document.getElementById("selectedMapState");
+  const selectedSTPlantSourceSelect = document.getElementById("selectedSTPlantSource");
+  const selectedSTPlantYearInput = document.getElementById("selectedSTPlantYear");
+  const selectedSTPlantYearValue = document.getElementById("selectedSTPlantYearValue");
+  const showTopCitiesInput = document.getElementById("showTopCities");
+
+  // populate existing state dropdown
+  statesSorted.forEach((state) => {
+    const option = document.createElement("option");
+    option.value = state;
+    option.textContent = stateNameLookup[state] || state;
+    if (state === "TX") option.selected = true;
+    selectedStateSelect.appendChild(option);
+  });
+
+  // populate existing two-state dropdowns
+  statesSorted.forEach((state) => {
+    const optionLeft = document.createElement("option");
+    optionLeft.value = state;
+    optionLeft.textContent = stateNameLookup[state] || state;
+    if (state === "TX") optionLeft.selected = true;
+    selectedStateLeftSelect.appendChild(optionLeft);
+
+    const optionRight = document.createElement("option");
+    optionRight.value = state;
+    optionRight.textContent = stateNameLookup[state] || state;
+    if (state === "CA") optionRight.selected = true;
+    selectedStateRightSelect.appendChild(optionRight);
+  });
+
+  // populate chart 6 source dropdown
+  simpleSourceOrder.forEach((source) => {
+    const option = document.createElement("option");
+    option.value = source;
+    option.textContent = source;
+    if (source === "Solar") option.selected = true;
+    selectedSourceSelect.appendChild(option);
+  });
+
+  // populate chart 7 source dropdown
+  simpleSourceOrder.forEach((source) => {
+    const option = document.createElement("option");
+    option.value = source;
+    option.textContent = source;
+    if (source === "Solar") option.selected = true;
+    selectedPlantSourceSelect.appendChild(option);
+  });
+
+  // populate chart 8 state dropdown
+  statesSorted.forEach((state) => {
+    const option = document.createElement("option");
+    option.value = state;
+    option.textContent = stateNameLookup[state] || state;
+    if (state === "CA") option.selected = true;
+    selectedMapStateSelect.appendChild(option);
+  });
+
+  // populate chart 8 source dropdown
+  simpleSourceOrder.forEach((source) => {
+    const option = document.createElement("option");
+    option.value = source;
+    option.textContent = source;
+    if (source === "Solar") option.selected = true;
+    selectedSTPlantSourceSelect.appendChild(option);
+  });
 
   renderChart2({
     container: "#chart2",
@@ -756,6 +879,44 @@ async function init() {
     });
   }
 
+  function renderStatePlantMapChart() {
+    const selectedMapState = selectedMapStateSelect.value;
+    const selectedSTPlantSource = selectedSTPlantSourceSelect.value;
+    const selectedSTPlantYear = +selectedSTPlantYearInput.value;
+    const showTopCitiesOn = !!showTopCitiesInput.checked;
+
+    selectedSTPlantYearValue.textContent = selectedSTPlantYear;
+
+    const {
+      selectedStateFeature,
+      selectedCounties,
+      selectedCountyMesh,
+      statePlantMapData,
+      statePlantRadius,
+      topCitiesInState
+    } = getChart8Context(
+      selectedMapState,
+      selectedSTPlantSource,
+      selectedSTPlantYear
+    );
+
+    renderChart8({
+      container: "#chart8",
+      selectedStateFeature,
+      selectedCounties,
+      selectedCountyMesh,
+      statePlantMapData,
+      statePlantRadius,
+      selectedMapState,
+      selectedSTPlantSource,
+      selectedSTPlantYear,
+      showTopCitiesOn,
+      topCitiesInState,
+      simpleEnergyColors,
+      stateNameLookup
+    });
+  }
+
   selectedStateSelect.addEventListener("change", renderSingleStateChart);
   selectedStateLeftSelect.addEventListener("change", renderTwoStateChart);
   selectedStateRightSelect.addEventListener("change", renderTwoStateChart);
@@ -764,10 +925,16 @@ async function init() {
   selectedPlantSourceSelect.addEventListener("change", renderPlantMapChart);
   selectedPlantYearInput.addEventListener("input", renderPlantMapChart);
 
+  selectedMapStateSelect.addEventListener("change", renderStatePlantMapChart);
+  selectedSTPlantSourceSelect.addEventListener("change", renderStatePlantMapChart);
+  selectedSTPlantYearInput.addEventListener("input", renderStatePlantMapChart);
+  showTopCitiesInput.addEventListener("change", renderStatePlantMapChart);
+
   renderSingleStateChart();
   renderTwoStateChart();
   renderStateMapChart();
   renderPlantMapChart();
+  renderStatePlantMapChart();
 }
 
 init();

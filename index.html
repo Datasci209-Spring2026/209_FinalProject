@@ -345,6 +345,50 @@
             </div>
           </div>
         </section>
+
+        <section class="chart-section">
+          <h3>Chart 13</h3>
+          <div class="section-block">
+            <div class="controls">
+              <div>
+                <label for="selectedMapState">State</label>
+                <select id="selectedMapState"></select>
+              </div>
+
+              <div>
+                <label for="selectedSTPlantSource">Dominant energy source</label>
+                <select id="selectedSTPlantSource"></select>
+              </div>
+
+              <div>
+                <label for="selectedSTPlantYear">Year</label>
+                <input
+                  id="selectedSTPlantYear"
+                  type="range"
+                  min="2001"
+                  max="2024"
+                  step="1"
+                  value="2024"
+                />
+                <span id="selectedSTPlantYearValue">2024</span>
+              </div>
+
+              <div>
+                <label for="showTopCities">City overlay</label>
+                <input
+                  id="showTopCities"
+                  type="checkbox"
+                  checked
+                />
+                <span>Show top 10 cities</span>
+              </div>
+            </div>
+
+            <div class="chart-card legend-aligned">
+              <div id="chart8"></div>
+            </div>
+          </div>
+        </section>
       </section>
 
       <hr class="dashboard-divider" />
@@ -450,7 +494,8 @@ Usability Study Results: <a href="usability_study/Group_3_Usability_Study.docx" 
         ".chart5-tooltip",
         ".chart5-v2-tooltip",
         ".chart6-tooltip",
-        ".chart7-tooltip"
+        ".chart7-tooltip",
+        ".state-plant-map-tooltip"
       ].forEach((selector) => {
         document.querySelectorAll(selector).forEach((node) => node.remove());
       });
