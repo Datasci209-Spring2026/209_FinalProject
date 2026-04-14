@@ -100,7 +100,7 @@
     .subsection-copy {
       margin: 0 0 24px;
       color: var(--matt-muted);
-      line-height: 1.45;
+      line-height: 1.55;
     }
 
     .chart-block {
@@ -182,6 +182,13 @@
     };
 
     const dashboardContent = `
+      <section class="story-section-intro">
+        <h2 class="section-heading">1. Emissions</h2>
+        <p class="section-intro-copy">
+          Greenhouse gas emissions provide the starting point for the story. These charts show where emissions are concentrated, how they differ across places, and how unevenly responsibility is distributed. The goal of this section is to frame climate change not as an abstract global issue, but as a measurable pattern that varies by country, region, and scale.
+        </p>
+      </section>
+
       <section>
         <h2 class="subsection-title">Global Greenhouse Gas Emissions</h2>
         <p class="subsection-copy">
@@ -192,6 +199,8 @@
           <h3>Chart 1</h3>
           <tableau-viz src="https://public.tableau.com/views/finalprojecteda_17718376269310/CombinedSheet12"></tableau-viz>
         </section>
+		  
+      <hr class="dashboard-divider" />
 
         <section class="chart-block">
           <h3>Chart 2</h3>
@@ -200,6 +209,13 @@
       </section>
 
       <hr class="dashboard-divider" />
+
+      <section class="section-transition">
+        <h2 class="section-heading">2. World-Wide Energy Consumption</h2>
+        <p class="section-intro-copy">
+          If the first section shows the scale of the emissions problem, this section begins to explain why it exists. Energy consumption is a key part of that story: as countries grow and demand more power, the climate impact depends not only on how much energy is used, but also on whether that energy comes from fossil fuels or low-carbon sources. The charts in this section are designed to reveal both the drivers of emissions and the early signs of a cleaner energy transition.
+        </p>
+      </section>
 
       <section>
         <h2 class="subsection-title">Global Energy Consumption Charts</h2>
@@ -211,7 +227,9 @@
           <h3>Chart 3</h3>
           <div id="vis1" class="vis"></div>
         </section>
-
+		  
+      <hr class="dashboard-divider" />
+		  
         <section class="chart-block">
           <h3>Chart 4</h3>
           <div id="vis2" class="vis"></div>
@@ -220,29 +238,36 @@
 
       <hr class="dashboard-divider" />
 
+        <section class="section-transition">
+          <h2 class="section-heading">3. United States Power Generation</h2>
+          <p class="section-intro-copy">
+            While the previous section explained how energy demand and low-carbon energy consumption vary across countries, this section asks a more focused question: what does the U.S. energy system actually look like beneath those patterns? By turning from consumption to power generation, these charts show how the United States has produced electricity over time and how the balance between fossil fuels and low-carbon sources has shifted. The goal of this section is to move from broad global trends to the specific infrastructure choices that help explain why the United States has often consumed a smaller share of low-carbon energy than some of its peers, while also revealing where progress toward a cleaner grid is beginning to take shape.
+          </p>
+        </section>
+
       <section>
         <h2 class="subsection-title">US Power Generation Exploration</h2>
         <p class="subsection-copy">
           Interactive D3 charts and maps for U.S. power generation by state and energy source.
         </p>
-
+		  
         <section class="chart-section">
           <h3>Chart 5 - U.S. Energy Sources Overview</h3>
           <p class="subsection-copy">
-          This chart provides a high-level summary of how the U.S. electrical grid has changed from 2001 to 2024. Coal once dominated power generation, but its role has steadily declined while natural gas expanded rapidly and became the largest single source of electricity. At the same time, low-carbon sources such as wind and solar have grown quickly, especially in the past decade.
+            This chart provides a high-level summary of how the U.S. electrical grid has changed from 2001 to 2024. Coal once dominated power generation, but its role has steadily declined while natural gas expanded rapidly and became the largest single source of electricity. At the same time, low-carbon sources such as wind and solar have grown quickly, especially in the past decade.
           </p>
           <div class="chart-card legend-aligned">
             <div id="chart2"></div>
-          <p class="subsection-copy" style="margin-top: 12px;">
-		  “Other” includes all remaining generation sources that are too small to be considered as primary categories, such as geothermal, biomass, petroleum-based fuels, landfill gas, municipal solid waste, and other smaller or mixed fuel types.
-		  </p>
-		  </div>
+            <p class="subsection-copy chart-footnote">
+              “Other” includes all remaining generation sources that are too small to be considered as primary categories, such as geothermal, biomass, petroleum-based fuels, landfill gas, municipal solid waste, and other smaller or mixed fuel types.
+            </p>
+          </div>
         </section>
 
         <section class="chart-section">
           <h3>Chart 6 - Identifying the Largest Changes in U.S. Energy Sources</h3>
           <p class="subsection-copy">
-          The previous chart shows the broad reshaping of the U.S. grid over time but does not answer the question how quickly those changes are happening. This chart focuses on the pace of change by comparing both annual shifts and longer-run compound annual growth rates across energy sources.
+            The previous chart shows the broad reshaping of the U.S. grid over time but does not answer the question how quickly those changes are happening. This chart focuses on the pace of change by comparing both annual shifts and longer-run compound annual growth rates across energy sources.
           </p>
           <div class="chart-card legend-aligned">
             <div id="chart3"></div>
@@ -250,7 +275,10 @@
         </section>
 
         <section class="chart-section">
-          <h3>Chart 7</h3>
+          <h3>Chart 7 - Power generation Varies Significatly at the State Level</h3>
+          <p class="subsection-copy">
+            National trends are informative but they can obscure how varied electricity generation is by individual states. This chart presents an overview of the top 9 energy producing states.
+          </p>
           <div class="chart4-layout">
             <div class="chart-card chart-span-3 legend-aligned">
               <div id="chart4"></div>
@@ -259,7 +287,10 @@
         </section>
 
         <section class="chart-section">
-          <h3>Chart 8</h3>
+          <h3>Chart 8 - Explore U.S. Energy Sources at the State Level</h3>
+          <p class="subsection-copy">
+            Even among the largest generating states, the paths toward energy transition differ substantially. This chart allows the user to focus on one state at a time and trace its unique energy mix over time.
+          </p>
           <div class="section-block">
             <div class="controls">
               <div>
@@ -275,7 +306,10 @@
         </section>
 
         <section class="chart-section">
-          <h3>Chart 9</h3>
+          <h3>Chart 9 - Compare State Energy Sources Side by Side</h3>
+          <p class="subsection-copy">
+            Direct comparison between states makes the contrast much easier to understand. Select two states you would like to view side by side.
+          </p>
           <div class="section-block">
             <div class="controls">
               <div>
@@ -298,7 +332,10 @@
         </section>
 
         <section class="chart-section">
-          <h3>Chart 10</h3>
+          <h3>Chart 10 - Primary Energy Sources by Geographic Areas</h3>
+          <p class="subsection-copy">
+            This chart examines how primary energy sources vary by geographic areas across the United States.
+          </p>
           <div class="section-block">
             <div class="controls">
               <div>
@@ -327,7 +364,10 @@
         </section>
 
         <section class="chart-section">
-          <h3>Chart 11</h3>
+          <h3>Chart 11 - An Overview of Power Plants Across U.S. by Dominant Energy Source</h3>
+          <p class="subsection-copy">
+            State-level maps show where generation is concentrated, but they still treat electricity production as an aggregate. The next chart moves down to the level of individual power plants.
+          </p>
           <div class="section-block">
             <div class="controls">
               <div>
@@ -356,7 +396,10 @@
         </section>
 
         <section class="chart-section">
-          <h3>Chart 12</h3>
+          <h3>Chart 12 - State Level Overview of Power Plants by Dominant Energy Source</h3>
+          <p class="subsection-copy">
+            Finally, after viewing the national distribution of power plants, this last chart zooms into a single state to show how plant locations relate to county boundaries and major cities.
+          </p>
           <div class="section-block">
             <div class="controls">
               <div>
