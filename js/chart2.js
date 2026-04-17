@@ -73,7 +73,7 @@ export function renderChart2({
   addStandardTitle(svg, {
     centerX: chartCenterX,
     y: 20,
-    title: "US Net Power Generation by Simplified Energy Source",
+    title: "US Net Power Generation by Energy Source Category",
     subtitle1: "Monthly From 2001 to 2024",
     subtitle2: "Source: EIA Form 923 Monthly Reports",
     theme: chartTheme
