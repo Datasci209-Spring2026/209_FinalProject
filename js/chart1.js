@@ -66,7 +66,9 @@ export function renderChart1({
     .y0((d) => y(d[0]))
     .y1((d) => y(d[1]));
 
-  const tooltip = createTooltip("energy-tooltip", chartTheme);
+  const tooltip = tooltip = createTooltip("energy-tooltip-simple", chartTheme)
+    .style("z-index", "99999")
+    .style("position", "fixed");
 
   const chartCenterX = (marginLeft + (width - marginRight)) / 2;
 
@@ -205,8 +207,8 @@ export function renderChart1({
       tooltip
         .html(html)
         .style("visibility", "visible")
-        .style("left", `${event.pageX + 12}px`)
-        .style("top", `${event.pageY + 12}px`);
+        .style("left", `${event.clientX + 12}px`)
+        .style("top", `${event.clientY + 12}px`);
     })
     .on("mouseleave", function () {
       hoverLine.style("visibility", "hidden");

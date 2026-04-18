@@ -42,7 +42,9 @@ export function renderChart5({
 
   applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = createTooltip("chart5-tooltip", chartTheme);
+  const tooltip = createTooltip("chart5-tooltip", chartTheme)
+    .style("z-index", "99999")
+    .style("position", "fixed");
 
   const x = d3
     .scaleUtc()
@@ -210,8 +212,8 @@ export function renderChart5({
       tooltip
         .html(html)
         .style("visibility", "visible")
-        .style("left", `${event.pageX + 12}px`)
-        .style("top", `${event.pageY + 12}px`);
+        .style("left", `${event.clientX + 12}px`)
+        .style("top", `${event.clientY + 12}px`);
     })
     .on("mouseleave", function () {
       hoverLine.style("visibility", "hidden");

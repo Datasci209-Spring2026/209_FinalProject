@@ -48,7 +48,9 @@ export function renderChart3({
 
   applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = createTooltip("chart3-tooltip", chartTheme);
+  const tooltip = createTooltip("chart3-tooltip", chartTheme)
+    .style("z-index", "99999")
+    .style("position", "fixed");
 
   const color = d3
     .scaleOrdinal()
@@ -301,8 +303,8 @@ export function renderChart3({
             <div>Percent of Total: ${d3.format(".1f")(pct)}%</div>
           `)
           .style("visibility", "visible")
-          .style("left", `${event.pageX + 12}px`)
-          .style("top", `${event.pageY + 12}px`);
+          .style("left", `${event.clientX + 12}px`)
+          .style("top", `${event.clientY + 12}px`);
       })
       .on("mouseleave", function () {
         tooltip.style("visibility", "hidden");
@@ -330,8 +332,8 @@ export function renderChart3({
             )} TWh</div>
           `)
           .style("visibility", "visible")
-          .style("left", `${event.pageX + 12}px`)
-          .style("top", `${event.pageY + 12}px`);
+          .style("left", `${event.clientX + 12}px`)
+          .style("top", `${event.clientY + 12}px`);
       })
       .on("mouseleave", function () {
         tooltip.style("visibility", "hidden");

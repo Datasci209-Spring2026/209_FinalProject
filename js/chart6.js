@@ -34,7 +34,9 @@ export function renderChart6({
 
   applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = createTooltip("chart6-tooltip", chartTheme);
+  const tooltip = createTooltip("chart6-tooltip", chartTheme)
+    .style("z-index", "99999")
+    .style("position", "fixed");
 
   const chartCenterX = (width - marginRight + marginLeft) / 2;
 
@@ -105,8 +107,8 @@ export function renderChart6({
           <div>Generation: ${d3.format(",.1f")(value)} TWh</div>
         `)
         .style("visibility", "visible")
-        .style("left", `${event.pageX + 12}px`)
-        .style("top", `${event.pageY + 12}px`);
+        .style("left", `${event.clientX + 12}px`)
+        .style("top", `${event.clientY + 12}px`);
     })
     .on("mouseleave", function () {
       tooltip.style("visibility", "hidden");

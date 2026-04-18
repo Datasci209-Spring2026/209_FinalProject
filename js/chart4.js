@@ -48,7 +48,9 @@ export function renderChart4({
 
   applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = createTooltip("chart4-tooltip", chartTheme);
+  const tooltip = createTooltip("chart4-tooltip", chartTheme)
+    .style("z-index", "99999")
+    .style("position", "fixed");
 
   const color = d3
     .scaleOrdinal()
@@ -237,8 +239,8 @@ export function renderChart4({
         tooltip
           .html(html)
           .style("visibility", "visible")
-          .style("left", `${event.pageX + 12}px`)
-          .style("top", `${event.pageY + 12}px`);
+          .style("left", `${event.clientX + 12}px`)
+          .style("top", `${event.clientY + 12}px`);
       })
       .on("mouseleave", function () {
         hoverLine.style("visibility", "hidden");

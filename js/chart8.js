@@ -30,7 +30,10 @@ export function renderChart8({
 
   applyBaseSvgStyle(svg);
 
-  const tooltip = createTooltip("state-plant-map-tooltip");
+  const tooltip = createTooltip("state-plant-map-tooltip")
+    .style("z-index", "99999")
+    .style("position", "fixed");
+  
   const pointColor = simpleEnergyColors[selectedSTPlantSource] || "#555";
   const chartCenterX = (width - marginRight + marginLeft) / 2;
 
@@ -127,8 +130,8 @@ export function renderChart8({
           }</div>
         `)
         .style("visibility", "visible")
-        .style("left", `${event.pageX + 12}px`)
-        .style("top", `${event.pageY + 12}px`);
+        .style("left", `${event.clientX + 12}px`)
+        .style("top", `${event.clientY + 12}px`);
     })
     .on("mouseleave", function () {
       tooltip.style("visibility", "hidden");
@@ -166,8 +169,8 @@ export function renderChart8({
           <div>Population: ${d3.format(",")(d.population)}</div>
         `)
         .style("visibility", "visible")
-        .style("left", `${event.pageX + 12}px`)
-        .style("top", `${event.pageY + 12}px`);
+        .style("left", `${event.clientX + 12}px`)
+        .style("top", `${event.clientY + 12}px`);
     })
     .on("mouseleave", function () {
       tooltip.style("visibility", "hidden");

@@ -34,7 +34,9 @@ export function renderChart7({
 
   applyBaseSvgStyle(svg, chartTheme);
 
-  const tooltip = createTooltip("chart7-tooltip", chartTheme);
+  const tooltip = createTooltip("chart7-tooltip", chartTheme)
+    .style("z-index", "99999")
+    .style("position", "fixed");
 
   const chartCenterX = (width - marginRight + marginLeft) / 2;
 
@@ -138,8 +140,8 @@ export function renderChart7({
           }</div>
         `)
         .style("visibility", "visible")
-        .style("left", `${event.pageX + 12}px`)
-        .style("top", `${event.pageY + 12}px`);
+        .style("left", `${event.clientX + 12}px`)
+        .style("top", `${event.clientY + 12}px`);
     })
     .on("mouseleave", function () {
       tooltip.style("visibility", "hidden");
